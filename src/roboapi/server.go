@@ -3,15 +3,15 @@ package roboapi
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	"database/sql"
 	"fmt"
+	"github.com/jinzhu/gorm"
 )
 
 type GinEnv struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
-func StartWebService(bindAddr string, db *sql.DB) {
+func StartWebService(bindAddr string, db *gorm.DB) {
 
 	gin.SetMode(gin.ReleaseMode)
 	env := &GinEnv{db: db}

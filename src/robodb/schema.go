@@ -1,26 +1,24 @@
 package robodb
 
+import "time"
+
 type SlnBasicInfo struct {
-	ID        int    `json:"id"`
-	SlnNo     string `json:"sln_no"`
-	SlnStatus string `json:"sln_status"`
+	ID            int       `json:"id"`
+	SlnNo         string    `json:"sln_no"`
+	SlnName       string    `json:"sln_name"`
+	SlnNum        int       `json:"sln_num"`
+	SlnDate       time.Time `json:"sln_date"`
+	CustomerPrice float64   `json:"customer_price"`
+	SupplierPrice float64   `json:"supplier_price"`
+	SlnStatus     string    `json:"sln_status"`
 }
 
-type WeldingExtraInfo struct {
-	ID           int     `json:"id"`
-	SlnNo        string  `json:"sln_no"`
-	WeldingPrice float64 `json:"welding_price"`
-	WeldingSet   int     `json:"welding_set"`
-	PayRatio     int     `json:"pay_ratio"`
-	WeldingName  string  `json:"welding_name"`
-	WeldingNote  string  `json:"welding_note"`
-}
-
-type WeldingFile struct {
-	ID       int    `json:"id"`
-	SlnNo    string `json:"sln_no"`
-	FileURL  string `json:"file_url"`
-	FileType string `json:"file_type"`
+type SlnUserInfo struct {
+	ID          int    `json:"id"`
+	SlnNo       string `json:"sln_no"`
+	PayRatio    int    `json:"pay_ratio"`
+	WeldingName string `json:"welding_name"`
+	WeldingNote string `json:"welding_note"`
 }
 
 type WeldingInfo struct {
@@ -39,23 +37,35 @@ type WeldingInfo struct {
 	MaxRadius         float64 `json:"max_radius"`
 }
 
-type WeldingDevices struct {
-	ID         int     `json:"id"`
-	SlnNo      int     `json:"sln_no"`
-	SlnType    string  `json:"sln_type"`
-	DeviceID   int     `json:"device_id"`
-	DeviceType string  `json:"device_type"`
-	BrandName  string  `json:"brand_name"`
-	Model      string  `json:"model"`
-	Price      float64 `json:"price"`
-	DeviceNum  int     `json:"device_num"`
-	Note       string  `json:"note"`
+type WeldingFile struct {
+	ID       int    `json:"id"`
+	SlnNo    string `json:"sln_no"`
+	SlnRole  string `json:"sln_role"`
+	FileURL  string `json:"file_url"`
+	FileType string `json:"file_type"`
 }
 
-type SolutionParams struct {
-	SlnNo            string            `json:"sln_no" binding:"required"`
-	WeldingInfo      WeldingInfo       `json:"welding_info" binding:"required"`
-	//WeldingExtraInfo WeldingExtraInfo  `json:"welding_extra_info" binding:"required"`
-	WeldingFile      []*WeldingFile    `json:"welding_file" binding:"required"`
-	//WeldingDevices   []*WeldingDevices `json:"welding_devices" binding:"required"`
+type WeldingDevice struct {
+	ID          int     `json:"id"`
+	SlnNo       string  `json:"sln_no"`
+	SlnRole     string  `json:"sln_role"`
+	DeviceID    int     `json:"device_id"`
+	DeviceType  string  `json:"device_type"`
+	DeviceModel string  `json:"device_model"`
+	DevicePrice float64 `json:"device_price"`
+	DeviceNum   int     `json:"device_num"`
+	BrandName   string  `json:"brand_name"`
+	DeviceNote  string  `json:"device_note"`
+}
+
+type CreateSolutionParams struct {
+	SlnNo            string           `json:"sln_no" binding:"required"`
+	SlnBasicInfo     *SlnBasicInfo    `json:"basic_info" binding:"required"`
+	SlnUserInfo      *SlnUserInfo     `json:"user_info" binding:"required"`
+	WeldingInfo      *WeldingInfo     `json:"welding_info"`
+	DeviceInfo       []*WeldingDevice `json:"device_info"`
+	DeviceImg        []*WeldingFile   `json:"device_img"`
+	DeviceCAD        *WeldingFile     `json:"device_cad"`
+	DeviceAttachment *WeldingFile     `json:"device_attachment"`
+	DeviceFile       []*WeldingFile   `json:"-"`
 }

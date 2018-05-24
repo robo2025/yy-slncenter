@@ -24,20 +24,19 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 
 // post url: /sln
 func (e *GinEnv) createSolution(c *gin.Context) {
-	solutionParams := &robodb.SolutionParams{}
+	solutionParams := &robodb.CreateSolutionParams{}
 	err := c.BindJSON(solutionParams)
 	if err != nil {
 		apiResponse(c, nil, err)
 		return
 	}
 
-	//resp, err := robodb.CreateSolution(e.db, solutionParams)
-
+	err = robodb.CreateSolution(e.db, solutionParams)
 	if err != nil {
 		log.Error("create solution error!")
 		apiResponse(c, nil, err)
 	} else {
-		apiResponse(c, solutionParams, nil)
+		apiResponse(c, "创建成功", nil)
 	}
 }
 

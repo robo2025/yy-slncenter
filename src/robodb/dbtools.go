@@ -1,144 +1,148 @@
 package robodb
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
-	"errors"
-	"github.com/didi/gendry/builder"
-	"github.com/didi/gendry/scanner"
+	"time"
 )
 
-func InitDB(sqlURL string) (*sql.DB, error) {
+func InitDB(sqlURL string) (*gorm.DB, error) {
 
-	db, err := sql.Open("mysql", sqlURL)
+	db, err := gorm.Open("mysql", sqlURL)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxIdleConns(20)
-	db.SetMaxOpenConns(20)
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
+	db.SingularTable(true)
 	return db, nil
 }
 
-// 数据库 API
-func fetchOneData(db *sql.DB, table string, where map[string]interface{}, field []string) (interface{}, error) {
-	if db == nil {
-		return nil, errors.New("sql.DB object couldn't be nil")
-	}
+func prepareSolutionData(params *CreateSolutionParams) *CreateSolutionParams {
+	// 准备数据
+	slnNo := params.SlnNo
 
-	cond, vals, err := builder.BuildSelect(table, where, field)
-	if err != nil {
-		return nil, err
-	}
+	// basic info
+	basicInfo := params.SlnBasicInfo
+	basicInfo.SlnNo = slnNo
+	basicInfo.SlnDate = time.Now()
 
-	row, err := db.Query(cond, vals...)
-	if err != nil || row == nil {
-		return nil, err
-	}
-	defer row.Close()
+	// user info
+	userInfo := params.SlnUserInfo
+	userInfo.SlnNo = slnNo
 
-	scanner.SetTagName("json")
-	var resp interface{}
+	// welding info
+	weldingInfo := params.WeldingInfo
+	weldingInfo.SlnNo = slnNo
 
-	switch table {
-	case "sln_basic_info":
-		var scanData *SlnBasicInfo
-		err = scanner.Scan(row, &scanData)
-		if err != nil {
-			return nil, err
+	// device info
+	deviceInfo := params.DeviceInfo
+	if len(deviceInfo) != 0 {
+		for _, el := range deviceInfo {
+			el.SlnNo = slnNo
+			el.SlnRole = "C"
 		}
-		resp = scanData
-
-	case "welding_info":
-		var scanData *WeldingInfo
-		err = scanner.Scan(row, &scanData)
-		if err != nil {
-			return nil, err
-		}
-		resp = scanData
-
-	case "welding_devices":
-		var scanData *WeldingDevices
-		err = scanner.Scan(row, &scanData)
-		if err != nil {
-			return nil, err
-		}
-		resp = scanData
-
-	default:
-		return nil, errors.New("table name error")
 	}
 
-	return resp, nil
+	// device file
+	deviceFile := make([]*WeldingFile, 0)
+
+	// device image
+	deviceImage := params.DeviceImg
+	if len(deviceImage) != 0 {
+		for _, el := range deviceImage {
+			el.SlnNo = slnNo
+			el.SlnRole = "C"
+			el.FileType = "img"
+			deviceFile = append(deviceFile, el)
+		}
+	}
+
+	// device cad
+	deviceCAD := params.DeviceCAD
+	if deviceCAD != nil {
+		deviceCAD.SlnNo = slnNo
+		deviceCAD.SlnRole = "C"
+		deviceCAD.FileType = "cad"
+		deviceFile = append(deviceFile, deviceCAD)
+	}
+
+	// device attachment
+	deviceAttachment := params.DeviceAttachment
+	if deviceAttachment != nil {
+		deviceAttachment.SlnNo = slnNo
+		deviceAttachment.SlnRole = "C"
+		deviceAttachment.FileType = "cad"
+		deviceFile = append(deviceFile, deviceAttachment)
+	}
+
+	resp := &CreateSolutionParams{
+		SlnBasicInfo: basicInfo,
+		SlnUserInfo:  userInfo,
+		WeldingInfo:  weldingInfo,
+		DeviceInfo:   deviceInfo,
+		DeviceFile:   deviceFile,
+	}
+	return resp
 }
 
-// 数据库 API
-func fetchMultiData(db *sql.DB, table string, where map[string]interface{}, field []string) ([]interface{}, error) {
+func writeSolutionData(db *gorm.DB, params *CreateSolutionParams) error {
+	var err error
 
-	if db == nil {
-		return nil, errors.New("sql.DB object couldn't be nil")
+	// 写入数据库
+	tx := db.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		return tx.Error
 	}
 
-	cond, vals, err := builder.BuildSelect(table, where, field)
+	// 写入 sln_basic_info
+	err = tx.Create(params.SlnBasicInfo).Error
 	if err != nil {
-		return nil, err
+		tx.Rollback()
+		return err
 	}
 
-	row, err := db.Query(cond, vals...)
-	if err != nil || row == nil {
-		return nil, err
-	}
-	defer row.Close()
-
-	scanner.SetTagName("json")
-	var resp []interface{}
-
-	switch table {
-	case "sln_basic_info":
-		var scanData []*SlnBasicInfo
-		err = scanner.Scan(row, &scanData)
-		if err != nil {
-			return nil, err
-		}
-
-		resp = make([]interface{}, len(scanData))
-		for k, v := range scanData {
-			resp[k] = v
-		}
-
-	case "welding_info":
-		var scanData []*WeldingInfo
-		err = scanner.Scan(row, &scanData)
-		if err != nil {
-			return nil, err
-		}
-
-		resp = make([]interface{}, len(scanData))
-		for k, v := range scanData {
-			resp[k] = v
-		}
-
-	case "welding_devices":
-		var scanData []*WeldingDevices
-		err = scanner.Scan(row, &scanData)
-		if err != nil {
-			return nil, err
-		}
-
-		resp = make([]interface{}, len(scanData))
-		for k, v := range scanData {
-			resp[k] = v
-		}
-
-	default:
-		return nil, errors.New("table name error")
+	// 写入 sln_user_info
+	err = tx.Create(params.SlnUserInfo).Error
+	if err != nil {
+		tx.Rollback()
+		return err
 	}
 
-	return resp, nil
+	// 写入 welding_info
+	err = tx.Create(params.WeldingInfo).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 写入 device_info
+	if len(params.DeviceInfo) != 0 {
+		for _, el := range params.DeviceInfo {
+			err = tx.Create(el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	// 写入 device_file
+	if len(params.DeviceFile) != 0 {
+		for _, el := range params.DeviceFile {
+			err = tx.Create(el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	return tx.Commit().Error
 }
