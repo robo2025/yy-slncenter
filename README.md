@@ -18,6 +18,7 @@ go get -u github.com/fatih/color
 go get -u github.com/spf13/cobra
 go get -u github.com/go-sql-driver/mysql
 go get -u github.com/jinzhu/gorm
+go get -u github.com/dgrijalva/jwt-go
 ```
 
 Install [UPX](https://upx.github.io/), In mac it is:
