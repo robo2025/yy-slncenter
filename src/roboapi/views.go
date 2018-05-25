@@ -23,7 +23,8 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 		return
 	}
 
-	slnList, err := robodb.FetchSolutionList(e.db)
+	uid := c.MustGet("uid").(int)
+	slnList, err := robodb.FetchSolutionList(e.db, uid)
 	if err != nil {
 		log.Error("Fetch solution list error!")
 		apiResponse(c, nil, err)
@@ -46,7 +47,8 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 		return
 	}
 
-	err = robodb.CreateSolution(e.db, solutionParams)
+	uid := c.MustGet("uid").(int)
+	err = robodb.CreateSolution(e.db, solutionParams, uid)
 	if err != nil {
 		log.Error("Create solution error!")
 		apiResponse(c, nil, err)
@@ -63,7 +65,8 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 	}
 
 	slnNo := c.Param("id")
-	slnDetail, err := robodb.FetchSolutionDetail(e.db, slnNo)
+	uid := c.MustGet("uid").(int)
+	slnDetail, err := robodb.FetchSolutionDetail(e.db, slnNo, uid)
 	if err != nil {
 		log.Error("Fetch solution detail error!")
 		apiResponse(c, nil, err)
@@ -88,7 +91,8 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 		return
 	}
 
-	err = robodb.UpdateSolution(e.db, solutionParams)
+	uid := c.MustGet("uid").(int)
+	err = robodb.UpdateSolution(e.db, solutionParams, uid)
 	if err != nil {
 		log.Error("Update solution error!")
 		apiResponse(c, nil, err)

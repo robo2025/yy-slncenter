@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS `sln_basic_info`;
 CREATE TABLE `sln_basic_info` (
   `id`             int(11)     NOT NULL AUTO_INCREMENT,
   `sln_no`         varchar(20) NOT NULL,
+  `customer_id`    int(11)     NOT NULL DEFAULT '0',
+  `supplier_id`    int(11)     NOT NULL DEFAULT '0',
   `sln_name`       varchar(20)          DEFAULT NULL,
   `sln_num`        int(11)              DEFAULT NULL,
   `sln_date`       datetime(6) NOT NULL,
@@ -15,7 +17,8 @@ CREATE TABLE `sln_basic_info` (
   `supplier_price` decimal(12, 2)       DEFAULT NULL,
   `sln_status`     varchar(5)  NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE (`sln_no`)
+  UNIQUE (`sln_no`),
+  KEY (`customer_id`, `supplier_id`)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;

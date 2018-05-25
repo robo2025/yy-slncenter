@@ -5,30 +5,30 @@ import (
 	"errors"
 )
 
-func FetchSolutionList(db *gorm.DB) ([]SlnBasicInfo, error) {
+func FetchSolutionList(db *gorm.DB, uid int) ([]SlnBasicInfo, error) {
 	dbData := []SlnBasicInfo{}
-	db.Find(&dbData)
+	db.Where("customer_id = ?", uid).Find(&dbData)
 	if len(dbData) == 0 {
 		return nil, errors.New("找不到方案列表")
 	}
 	return dbData, nil
 }
 
-func FetchSolutionDetail(db *gorm.DB, slnID string) (*SlnBasicInfo, error) {
+func FetchSolutionDetail(db *gorm.DB, slnID string, uid int) (*SlnBasicInfo, error) {
 	dbData := &SlnBasicInfo{}
-	db.Where("sln_no = ?", slnID).First(dbData)
+	db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(dbData)
 	if dbData.ID == 0 {
 		return nil, errors.New("找不到相应方案")
 	}
 	return dbData, nil
 }
 
-func CreateSolution(db *gorm.DB, params *SolutionParams) error {
-	dbParams := prepareSolutionData(params)
+func CreateSolution(db *gorm.DB, params *SolutionParams, uid int) error {
+	dbParams := prepareSolutionData(params, uid)
 	return writeSolutionData(db, dbParams)
 }
 
-func UpdateSolution(db *gorm.DB, params *SolutionParams) error {
-	dbParams := prepareSolutionData(params)
+func UpdateSolution(db *gorm.DB, params *SolutionParams, uid int) error {
+	dbParams := prepareSolutionData(params, uid)
 	return updateSolutionData(db, dbParams)
 }

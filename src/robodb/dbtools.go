@@ -19,7 +19,7 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 	return db, nil
 }
 
-func prepareSolutionData(params *SolutionParams) *SolutionParams {
+func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	// 准备数据
 	slnNo := strings.TrimSpace(params.SlnNo)
 
@@ -27,6 +27,7 @@ func prepareSolutionData(params *SolutionParams) *SolutionParams {
 	slnBasicInfo := params.SlnBasicInfo
 	if slnBasicInfo != nil {
 		slnBasicInfo.SlnNo = slnNo
+		slnBasicInfo.CustomerID = uid
 		slnBasicInfo.SlnDate = time.Now()
 	}
 
@@ -65,6 +66,7 @@ func prepareSolutionData(params *SolutionParams) *SolutionParams {
 	// 返回组合数据
 	resp := &SolutionParams{
 		SlnNo:         slnNo,
+		UID:           uid,
 		SlnBasicInfo:  slnBasicInfo,
 		SlnUserInfo:   slnUserInfo,
 		WeldingInfo:   weldingInfo,
@@ -144,7 +146,8 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 
 	// 查找数据库相应数据
 	slnNo := params.SlnNo
-	db.Where("sln_no = ?", slnNo).First(slnBasicInfo)
+	uid := params.UID
+	db.Where("sln_no = ? AND customer_id = ?", slnNo, uid).First(slnBasicInfo)
 	if slnBasicInfo == nil {
 		return errors.New("找不到相应方案")
 	}

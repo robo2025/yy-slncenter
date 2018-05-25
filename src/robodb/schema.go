@@ -5,6 +5,8 @@ import "time"
 type SlnBasicInfo struct {
 	ID            int       `json:"id"`
 	SlnNo         string    `json:"sln_no"`
+	CustomerID    int       `json:"-"`
+	SupplierID    int       `json:"-"`
 	SlnName       string    `json:"sln_name"`
 	SlnNum        int       `json:"sln_num"`
 	SlnDate       time.Time `json:"sln_date"`
@@ -60,6 +62,7 @@ type WeldingDevice struct {
 
 type SolutionParams struct {
 	SlnNo         string           `json:"sln_no" binding:"required"`
+	UID           int              `json:"-"`
 	SlnBasicInfo  *SlnBasicInfo    `json:"sln_basic_info"`
 	SlnUserInfo   *SlnUserInfo     `json:"sln_user_info"`
 	WeldingInfo   *WeldingInfo     `json:"welding_info"`
