@@ -24,4 +24,4 @@ COPY --from=builder /opt/slncenter /usr/local/bin/
 RUN apk add --no-cache --update ca-certificates
 
 EXPOSE 9000
-CMD [ "slncenter", "-l", ":9000", "-d", "niuniu:robo2025@tcp(gz-cdb-n376xr4s.sql.tencentcdb.com:62715)/slncenter?charset=utf8" ]
+CMD [ "slncenter", "-l", ":9000"]
