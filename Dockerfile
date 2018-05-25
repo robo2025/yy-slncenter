@@ -11,8 +11,7 @@ RUN go get -u github.com/gin-gonic/gin \
     && go get -u github.com/fatih/color \
     && go get -u github.com/spf13/cobra \
     && go get -u github.com/go-sql-driver/mysql \
-    && go get -u github.com/didi/gendry/builder \
-    && go get -u github.com/didi/gendry/scanner
+    && go get -u github.com/jinzhu/gorm
 RUN make docker
 
 
