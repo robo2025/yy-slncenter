@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"time"
 	"errors"
+	"strings"
 )
 
 func InitDB(sqlURL string) (*gorm.DB, error) {
@@ -20,7 +21,7 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 
 func prepareSolutionData(params *SolutionParams) *SolutionParams {
 	// 准备数据
-	slnNo := params.SlnNo
+	slnNo := strings.TrimSpace(params.SlnNo)
 
 	// sln_basic_info 表
 	slnBasicInfo := params.SlnBasicInfo
@@ -63,6 +64,7 @@ func prepareSolutionData(params *SolutionParams) *SolutionParams {
 
 	// 返回组合数据
 	resp := &SolutionParams{
+		SlnNo:         slnNo,
 		SlnBasicInfo:  slnBasicInfo,
 		SlnUserInfo:   slnUserInfo,
 		WeldingInfo:   weldingInfo,
@@ -136,18 +138,18 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 
 func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 	var err error
-	var basicInfo *SlnBasicInfo
-	var userInfo *SlnUserInfo
-	var weldingFile []*WeldingFile
+	slnBasicInfo := &SlnBasicInfo{}
+	slnUserInfo := &SlnUserInfo{}
+	weldingFile := []WeldingFile{}
 
 	// 查找数据库相应数据
 	slnNo := params.SlnNo
-	db.Where("sln_no = ?", slnNo).First(basicInfo)
-	if basicInfo == nil {
+	db.Where("sln_no = ?", slnNo).First(slnBasicInfo)
+	if slnBasicInfo == nil {
 		return errors.New("找不到相应方案")
 	}
-	db.Where("sln_no = ?", slnNo).First(userInfo)
-	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(weldingFile)
+	db.Where("sln_no = ?", slnNo).First(slnUserInfo)
+	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(&weldingFile)
 
 	// 写入数据库
 	tx := db.Begin()
@@ -163,8 +165,8 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 	}
 
 	// 更新 sln_basic_info 表
-	if basicInfo != nil && params.SlnBasicInfo != nil {
-		params.SlnBasicInfo.ID = basicInfo.ID
+	if slnBasicInfo != nil && params.SlnBasicInfo != nil {
+		params.SlnBasicInfo.ID = slnBasicInfo.ID
 		err = tx.Save(params.SlnBasicInfo).Error
 		if err != nil {
 			tx.Rollback()
@@ -173,8 +175,8 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 	}
 
 	// 更新 sln_user_info 表
-	if userInfo != nil && params.SlnUserInfo != nil {
-		params.SlnUserInfo.ID = userInfo.ID
+	if slnUserInfo != nil && params.SlnUserInfo != nil {
+		params.SlnUserInfo.ID = slnUserInfo.ID
 		err = tx.Save(params.SlnUserInfo).Error
 		if err != nil {
 			tx.Rollback()
@@ -194,7 +196,7 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 
 		// 插入所有的新数据
 		for _, el := range params.WeldingFile {
-			err = tx.Create(el).Error
+			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
 				return err

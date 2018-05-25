@@ -30,6 +30,7 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/", env.viewIndex)
 	rg.GET("/sln", env.viewSolutionList)
-	rg.POST("/sln", env.createSolution)
+	rg.POST("/sln", env.viewCreateSolution)
 	rg.GET("/sln/:id", env.viewSolutionDetail)
+	rg.PUT("/sln/:id", env.viewUpdateSolution)
 }

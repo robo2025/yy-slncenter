@@ -23,7 +23,7 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 }
 
 // post url: /sln
-func (e *GinEnv) createSolution(c *gin.Context) {
+func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 	solutionParams := &robodb.SolutionParams{}
 	err := c.BindJSON(solutionParams)
 	if err != nil {
@@ -33,10 +33,10 @@ func (e *GinEnv) createSolution(c *gin.Context) {
 
 	err = robodb.CreateSolution(e.db, solutionParams)
 	if err != nil {
-		log.Error("create solution error!")
+		log.Error("Create solution error!")
 		apiResponse(c, nil, err)
 	} else {
-		apiResponse(c, "创建成功", nil)
+		apiResponse(c, "创建方案成功", nil)
 	}
 }
 
@@ -49,5 +49,25 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 		apiResponse(c, nil, err)
 	} else {
 		apiResponse(c, slnDetail, nil)
+	}
+}
+
+// put url: /sln/:id
+func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
+	solutionParams := &robodb.SolutionParams{}
+	solutionParams.SlnNo = c.Param("id")
+
+	err := c.BindJSON(solutionParams)
+	if err != nil {
+		apiResponse(c, nil, err)
+		return
+	}
+
+	err = robodb.UpdateSolution(e.db, solutionParams)
+	if err != nil {
+		log.Error("Update solution error!")
+		apiResponse(c, nil, err)
+	} else {
+		apiResponse(c, "更新方案成功", nil)
 	}
 }
