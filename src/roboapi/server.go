@@ -17,7 +17,10 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 	env := &GinEnv{db: db}
 
 	router := gin.Default()
+	// use cors
 	router.Use(cors.Default())
+	// use jwt
+	router.Use(JWTAuth())
 
 	// Register router
 	routerGroup := router.Group("/v1")

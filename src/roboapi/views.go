@@ -8,11 +8,21 @@ import (
 
 // url: /
 func (e *GinEnv) viewIndex(c *gin.Context) {
+	isAuth := c.GetBool("isAuth")
+	if !isAuth {
+		return
+	}
+
 	apiResponse(c, nil, nil)
 }
 
 // url: /sln
 func (e *GinEnv) viewSolutionList(c *gin.Context) {
+	isAuth := c.GetBool("isAuth")
+	if !isAuth {
+		return
+	}
+
 	slnList, err := robodb.FetchSolutionList(e.db)
 	if err != nil {
 		log.Error("Fetch solution list error!")
@@ -24,6 +34,11 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 
 // post url: /sln
 func (e *GinEnv) viewCreateSolution(c *gin.Context) {
+	isAuth := c.GetBool("isAuth")
+	if !isAuth {
+		return
+	}
+
 	solutionParams := &robodb.SolutionParams{}
 	err := c.BindJSON(solutionParams)
 	if err != nil {
@@ -42,6 +57,11 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
+	isAuth := c.GetBool("isAuth")
+	if !isAuth {
+		return
+	}
+
 	slnNo := c.Param("id")
 	slnDetail, err := robodb.FetchSolutionDetail(e.db, slnNo)
 	if err != nil {
@@ -54,6 +74,11 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 
 // put url: /sln/:id
 func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
+	isAuth := c.GetBool("isAuth")
+	if !isAuth {
+		return
+	}
+
 	solutionParams := &robodb.SolutionParams{}
 	solutionParams.SlnNo = c.Param("id")
 
