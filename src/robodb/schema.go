@@ -58,14 +58,11 @@ type WeldingDevice struct {
 	DeviceNote  string  `json:"device_note"`
 }
 
-type CreateSolutionParams struct {
-	SlnNo            string           `json:"sln_no" binding:"required"`
-	SlnBasicInfo     *SlnBasicInfo    `json:"basic_info" binding:"required"`
-	SlnUserInfo      *SlnUserInfo     `json:"user_info" binding:"required"`
-	WeldingInfo      *WeldingInfo     `json:"welding_info"`
-	DeviceInfo       []*WeldingDevice `json:"device_info"`
-	DeviceImg        []*WeldingFile   `json:"device_img"`
-	DeviceCAD        *WeldingFile     `json:"device_cad"`
-	DeviceAttachment *WeldingFile     `json:"device_attachment"`
-	DeviceFile       []*WeldingFile   `json:"-"`
+type SolutionParams struct {
+	SlnNo         string           `json:"sln_no" binding:"required"`
+	SlnBasicInfo  *SlnBasicInfo    `json:"sln_basic_info"`
+	SlnUserInfo   *SlnUserInfo     `json:"sln_user_info"`
+	WeldingInfo   *WeldingInfo     `json:"welding_info"`
+	WeldingDevice []*WeldingDevice `json:"welding_device"`
+	WeldingFile   []*WeldingFile   `json:"welding_file"`
 }

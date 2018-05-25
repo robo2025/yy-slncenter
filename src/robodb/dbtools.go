@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
 	"time"
+	"errors"
 )
 
 func InitDB(sqlURL string) (*gorm.DB, error) {
@@ -17,75 +18,61 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 	return db, nil
 }
 
-func prepareSolutionData(params *CreateSolutionParams) *CreateSolutionParams {
+func prepareSolutionData(params *SolutionParams) *SolutionParams {
 	// 准备数据
 	slnNo := params.SlnNo
 
-	// basic info
-	basicInfo := params.SlnBasicInfo
-	basicInfo.SlnNo = slnNo
-	basicInfo.SlnDate = time.Now()
+	// sln_basic_info 表
+	slnBasicInfo := params.SlnBasicInfo
+	if slnBasicInfo != nil {
+		slnBasicInfo.SlnNo = slnNo
+		slnBasicInfo.SlnDate = time.Now()
+	}
 
-	// user info
-	userInfo := params.SlnUserInfo
-	userInfo.SlnNo = slnNo
+	// sln_user_info 表
+	slnUserInfo := params.SlnUserInfo
+	if slnUserInfo != nil {
+		slnUserInfo.SlnNo = slnNo
+	}
 
-	// welding info
+	// welding_info 表
 	weldingInfo := params.WeldingInfo
-	weldingInfo.SlnNo = slnNo
+	if weldingInfo != nil {
+		weldingInfo.SlnNo = slnNo
+	}
 
-	// device info
-	deviceInfo := params.DeviceInfo
-	if len(deviceInfo) != 0 {
-		for _, el := range deviceInfo {
+	// welding_device 表
+	weldingDevice := params.WeldingDevice
+	if len(weldingDevice) != 0 {
+		for _, el := range weldingDevice {
 			el.SlnNo = slnNo
 			el.SlnRole = "C"
 		}
 	}
 
-	// device file
-	deviceFile := make([]*WeldingFile, 0)
+	// welding_file 表
+	weldingFile := make([]*WeldingFile, 0)
 
-	// device image
-	deviceImage := params.DeviceImg
-	if len(deviceImage) != 0 {
-		for _, el := range deviceImage {
+	if len(params.WeldingFile) != 0 {
+		for _, el := range params.WeldingFile {
 			el.SlnNo = slnNo
 			el.SlnRole = "C"
-			el.FileType = "img"
-			deviceFile = append(deviceFile, el)
+			weldingFile = append(weldingFile, el)
 		}
 	}
 
-	// device cad
-	deviceCAD := params.DeviceCAD
-	if deviceCAD != nil {
-		deviceCAD.SlnNo = slnNo
-		deviceCAD.SlnRole = "C"
-		deviceCAD.FileType = "cad"
-		deviceFile = append(deviceFile, deviceCAD)
-	}
-
-	// device attachment
-	deviceAttachment := params.DeviceAttachment
-	if deviceAttachment != nil {
-		deviceAttachment.SlnNo = slnNo
-		deviceAttachment.SlnRole = "C"
-		deviceAttachment.FileType = "cad"
-		deviceFile = append(deviceFile, deviceAttachment)
-	}
-
-	resp := &CreateSolutionParams{
-		SlnBasicInfo: basicInfo,
-		SlnUserInfo:  userInfo,
-		WeldingInfo:  weldingInfo,
-		DeviceInfo:   deviceInfo,
-		DeviceFile:   deviceFile,
+	// 返回组合数据
+	resp := &SolutionParams{
+		SlnBasicInfo:  slnBasicInfo,
+		SlnUserInfo:   slnUserInfo,
+		WeldingInfo:   weldingInfo,
+		WeldingDevice: weldingDevice,
+		WeldingFile:   weldingFile,
 	}
 	return resp
 }
 
-func writeSolutionData(db *gorm.DB, params *CreateSolutionParams) error {
+func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 	var err error
 
 	// 写入数据库
@@ -101,30 +88,30 @@ func writeSolutionData(db *gorm.DB, params *CreateSolutionParams) error {
 		return tx.Error
 	}
 
-	// 写入 sln_basic_info
+	// 写入 sln_basic_info 表
 	err = tx.Create(params.SlnBasicInfo).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	// 写入 sln_user_info
+	// 写入 sln_user_info 表
 	err = tx.Create(params.SlnUserInfo).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	// 写入 welding_info
+	// 写入 welding_info 表
 	err = tx.Create(params.WeldingInfo).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	// 写入 device_info
-	if len(params.DeviceInfo) != 0 {
-		for _, el := range params.DeviceInfo {
+	// 写入 welding_device 表
+	if len(params.WeldingDevice) != 0 {
+		for _, el := range params.WeldingDevice {
 			err = tx.Create(el).Error
 			if err != nil {
 				tx.Rollback()
@@ -133,9 +120,80 @@ func writeSolutionData(db *gorm.DB, params *CreateSolutionParams) error {
 		}
 	}
 
-	// 写入 device_file
-	if len(params.DeviceFile) != 0 {
-		for _, el := range params.DeviceFile {
+	// 写入 welding_file 表
+	if len(params.WeldingFile) != 0 {
+		for _, el := range params.WeldingFile {
+			err = tx.Create(el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
+	var err error
+	var basicInfo *SlnBasicInfo
+	var userInfo *SlnUserInfo
+	var weldingFile []*WeldingFile
+
+	// 查找数据库相应数据
+	slnNo := params.SlnNo
+	db.Where("sln_no = ?", slnNo).First(basicInfo)
+	if basicInfo == nil {
+		return errors.New("找不到相应方案")
+	}
+	db.Where("sln_no = ?", slnNo).First(userInfo)
+	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(weldingFile)
+
+	// 写入数据库
+	tx := db.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// 更新 sln_basic_info 表
+	if basicInfo != nil && params.SlnBasicInfo != nil {
+		params.SlnBasicInfo.ID = basicInfo.ID
+		err = tx.Save(params.SlnBasicInfo).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// 更新 sln_user_info 表
+	if userInfo != nil && params.SlnUserInfo != nil {
+		params.SlnUserInfo.ID = userInfo.ID
+		err = tx.Save(params.SlnUserInfo).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// 更新 welding_file 表
+	if len(params.WeldingFile) != 0 {
+
+		// 删除所有的旧数据
+		err = db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Delete(WeldingFile{}).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		// 插入所有的新数据
+		for _, el := range params.WeldingFile {
 			err = tx.Create(el).Error
 			if err != nil {
 				tx.Rollback()
