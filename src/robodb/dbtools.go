@@ -148,7 +148,7 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 	slnNo := params.SlnNo
 	uid := params.UID
 	db.Where("sln_no = ? AND customer_id = ?", slnNo, uid).First(slnBasicInfo)
-	if slnBasicInfo == nil {
+	if slnBasicInfo.ID == 0 {
 		return errors.New("找不到相应方案")
 	}
 	db.Where("sln_no = ?", slnNo).First(slnUserInfo)
