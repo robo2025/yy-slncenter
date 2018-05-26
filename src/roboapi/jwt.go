@@ -18,6 +18,7 @@ type CustomClaims struct {
 	IAT float64 `json:"iat"`
 }
 
+// 解析 JWT
 func parseToken(tokenString string) (*CustomClaims, error) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -46,7 +47,7 @@ func parseToken(tokenString string) (*CustomClaims, error) {
 	return nil, fmt.Errorf("无效的 Token")
 }
 
-// 中间件，检查token
+// Gin 中间件，用户检查 JWT
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取 Token

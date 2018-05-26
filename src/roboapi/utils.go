@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// API 统一回复
 func apiResponse(c *gin.Context, respData interface{}, err error) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{

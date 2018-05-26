@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// InitDB 初始化数据库
 func InitDB(sqlURL string) (*gorm.DB, error) {
 
 	db, err := gorm.Open("mysql", sqlURL)
@@ -19,6 +20,7 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 	return db, nil
 }
 
+// 准备写入或者更新用的方案数据
 func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	// 准备数据
 	slnNo := strings.TrimSpace(params.SlnNo)
@@ -76,6 +78,7 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	return resp
 }
 
+// 写入方案数据
 func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 	var err error
 
@@ -138,6 +141,7 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 	return tx.Commit().Error
 }
 
+// 更新方案数据
 func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 	var err error
 	slnBasicInfo := &SlnBasicInfo{}

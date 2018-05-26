@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// 获取方案列表
 func FetchSolutionList(db *gorm.DB, uid int) ([]SlnBasicInfo, error) {
 	dbData := []SlnBasicInfo{}
 	db.Where("customer_id = ?", uid).Find(&dbData)
@@ -14,6 +15,7 @@ func FetchSolutionList(db *gorm.DB, uid int) ([]SlnBasicInfo, error) {
 	return dbData, nil
 }
 
+// 获取方案细节
 func FetchSolutionDetail(db *gorm.DB, slnID string, uid int) (*SolutionParams, error) {
 	slnBasicInfo := &SlnBasicInfo{}
 	slnUserInfo := &SlnUserInfo{}
@@ -42,11 +44,13 @@ func FetchSolutionDetail(db *gorm.DB, slnID string, uid int) (*SolutionParams, e
 	return resp, nil
 }
 
+// 创建新方案
 func CreateSolution(db *gorm.DB, params *SolutionParams, uid int) error {
 	dbParams := prepareSolutionData(params, uid)
 	return writeSolutionData(db, dbParams)
 }
 
+// 更新现有方案
 func UpdateSolution(db *gorm.DB, params *SolutionParams, uid int) error {
 	dbParams := prepareSolutionData(params, uid)
 	return updateSolutionData(db, dbParams)

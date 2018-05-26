@@ -2,6 +2,7 @@ package robodb
 
 import "time"
 
+// sln_basic_info 表
 type SlnBasicInfo struct {
 	ID            int       `json:"id"`
 	SlnNo         string    `json:"sln_no"`
@@ -15,6 +16,7 @@ type SlnBasicInfo struct {
 	SlnStatus     string    `json:"sln_status"`
 }
 
+// sln_user_info 表
 type SlnUserInfo struct {
 	ID          int    `json:"id"`
 	SlnNo       string `json:"sln_no"`
@@ -23,6 +25,7 @@ type SlnUserInfo struct {
 	WeldingNote string `json:"welding_note"`
 }
 
+// welding_info 表
 type WeldingInfo struct {
 	ID                int     `json:"id"`
 	SlnNo             string  `json:"sln_no"`
@@ -39,6 +42,7 @@ type WeldingInfo struct {
 	MaxRadius         float64 `json:"max_radius"`
 }
 
+// welding_file 表
 type WeldingFile struct {
 	ID       int    `json:"id"`
 	SlnNo    string `json:"sln_no"`
@@ -47,6 +51,7 @@ type WeldingFile struct {
 	FileType string `json:"file_type"`
 }
 
+// welding_device 表
 type WeldingDevice struct {
 	ID          int     `json:"id"`
 	SlnNo       string  `json:"sln_no"`
@@ -60,6 +65,7 @@ type WeldingDevice struct {
 	DeviceNote  string  `json:"device_note"`
 }
 
+// 数据传输 struct
 type SolutionParams struct {
 	SlnNo         string          `json:"sln_no" binding:"required"`
 	UID           int             `json:"-"`

@@ -11,7 +11,7 @@ import (
 var listenURL string
 var dbURL string
 
-// Define command
+// 设置命令行参数
 var rootCmd = &cobra.Command{
 	Use:   "slncenter",
 	Short: cmdIntroduce,
@@ -28,6 +28,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// 初始化命令行
 func InitCmd() {
 	// print banner
 	color.Cyan(cmdBanner)
