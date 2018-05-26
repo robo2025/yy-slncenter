@@ -20,13 +20,3 @@ func apiResponse(c *gin.Context, respData interface{}, err error) {
 		})
 	}
 }
-
-// 转换请求参数
-func transSolutionParams(c *gin.Context) map[string]interface{} {
-	params := make(map[string]interface{})
-
-	for key, value := range c.Request.URL.Query() {
-		params[key] = value[0]
-	}
-	return params
-}

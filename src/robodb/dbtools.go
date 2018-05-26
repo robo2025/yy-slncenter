@@ -44,17 +44,17 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	}
 
 	// welding_device 表
-	weldingDevice := params.WeldingDevice
-	if len(weldingDevice) != 0 {
-		for _, el := range weldingDevice {
+	weldingDevice := make([]WeldingDevice, 0)
+	if len(params.WeldingDevice) != 0 {
+		for _, el := range params.WeldingDevice {
 			el.SlnNo = slnNo
 			el.SlnRole = "C"
+			weldingDevice = append(weldingDevice, el)
 		}
 	}
 
 	// welding_file 表
-	weldingFile := make([]*WeldingFile, 0)
-
+	weldingFile := make([]WeldingFile, 0)
 	if len(params.WeldingFile) != 0 {
 		for _, el := range params.WeldingFile {
 			el.SlnNo = slnNo
@@ -116,7 +116,7 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 	// 写入 welding_device 表
 	if len(params.WeldingDevice) != 0 {
 		for _, el := range params.WeldingDevice {
-			err = tx.Create(el).Error
+			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
 				return err
@@ -127,7 +127,7 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 	// 写入 welding_file 表
 	if len(params.WeldingFile) != 0 {
 		for _, el := range params.WeldingFile {
-			err = tx.Create(el).Error
+			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
 				return err

@@ -61,11 +61,11 @@ type WeldingDevice struct {
 }
 
 type SolutionParams struct {
-	SlnNo         string           `json:"sln_no" binding:"required"`
-	UID           int              `json:"-"`
-	SlnBasicInfo  *SlnBasicInfo    `json:"sln_basic_info"`
-	SlnUserInfo   *SlnUserInfo     `json:"sln_user_info"`
-	WeldingInfo   *WeldingInfo     `json:"welding_info"`
-	WeldingDevice []*WeldingDevice `json:"welding_device"`
-	WeldingFile   []*WeldingFile   `json:"welding_file"`
+	SlnNo         string          `json:"sln_no" binding:"required"`
+	UID           int             `json:"-"`
+	SlnBasicInfo  *SlnBasicInfo   `json:"sln_basic_info"`
+	SlnUserInfo   *SlnUserInfo    `json:"sln_user_info"`
+	WeldingInfo   *WeldingInfo    `json:"welding_info"`
+	WeldingDevice []WeldingDevice `json:"welding_device"`
+	WeldingFile   []WeldingFile   `json:"welding_file"`
 }
