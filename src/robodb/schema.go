@@ -47,6 +47,7 @@ type WeldingFile struct {
 	ID       int    `json:"id"`
 	SlnNo    string `json:"sln_no"`
 	SlnRole  string `json:"sln_role"`
+	FileName string `json:"file_name"`
 	FileURL  string `json:"file_url"`
 	FileType string `json:"file_type"`
 }
