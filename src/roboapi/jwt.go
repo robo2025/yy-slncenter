@@ -53,7 +53,7 @@ func JWTAuth() gin.HandlerFunc {
 		// 获取 Token
 		token := c.Request.Header.Get("Authorization")
 		if token == "" {
-			apiResponse(c, nil, fmt.Errorf("请求中没有 Token"))
+			apiResponse(c, RespTokenNotExist, nil, "请求中没有 Token")
 			c.Set("isAuth", false)
 			return
 		}
@@ -61,7 +61,7 @@ func JWTAuth() gin.HandlerFunc {
 		// 解析 Token
 		claims, err := parseToken(token)
 		if err != nil {
-			apiResponse(c, nil, err)
+			apiResponse(c, RespTokenFailed, nil, err.Error())
 			c.Set("isAuth", false)
 			return
 		}

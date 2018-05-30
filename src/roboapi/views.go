@@ -13,7 +13,7 @@ func (e *GinEnv) viewIndex(c *gin.Context) {
 		return
 	}
 
-	apiResponse(c, nil, nil)
+	apiResponse(c, RespSuccess, nil, "")
 }
 
 // url: /sln
@@ -26,10 +26,10 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 	uid := c.MustGet("uid").(int)
 	slnList, err := robodb.FetchSolutionList(e.db, uid)
 	if err != nil {
-		log.Error("Fetch solution list error!")
-		apiResponse(c, nil, err)
+		log.Error("获取方案列表错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
 	} else {
-		apiResponse(c, slnList, nil)
+		apiResponse(c, RespSuccess, slnList, "")
 	}
 }
 
@@ -43,17 +43,17 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 	solutionParams := &robodb.SolutionParams{}
 	err := c.BindJSON(solutionParams)
 	if err != nil {
-		apiResponse(c, nil, err)
+		apiResponse(c, RespFailed, nil, err.Error())
 		return
 	}
 
 	uid := c.MustGet("uid").(int)
 	err = robodb.CreateSolution(e.db, solutionParams, uid)
 	if err != nil {
-		log.Error("Create solution error!")
-		apiResponse(c, nil, err)
+		log.Error("创建方案错误!")
+		apiResponse(c, RespFailed, nil, err.Error())
 	} else {
-		apiResponse(c, "创建方案成功", nil)
+		apiResponse(c, RespSuccess, nil, "创建方案成功")
 	}
 }
 
@@ -68,10 +68,10 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 	uid := c.MustGet("uid").(int)
 	slnDetail, err := robodb.FetchSolutionDetail(e.db, slnNo, uid)
 	if err != nil {
-		log.Error("Fetch solution detail error!")
-		apiResponse(c, nil, err)
+		log.Error("获取方案细节错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
 	} else {
-		apiResponse(c, slnDetail, nil)
+		apiResponse(c, RespSuccess, slnDetail, "")
 	}
 }
 
@@ -87,16 +87,16 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 
 	err := c.BindJSON(solutionParams)
 	if err != nil {
-		apiResponse(c, nil, err)
+		apiResponse(c, RespFailed, nil, err.Error())
 		return
 	}
 
 	uid := c.MustGet("uid").(int)
 	err = robodb.UpdateSolution(e.db, solutionParams, uid)
 	if err != nil {
-		log.Error("Update solution error!")
-		apiResponse(c, nil, err)
+		log.Error("更新方案列表错误!")
+		apiResponse(c, RespFailed, nil, err.Error())
 	} else {
-		apiResponse(c, "更新方案成功", nil)
+		apiResponse(c, RespSuccess, nil, "更新方案成功")
 	}
 }
