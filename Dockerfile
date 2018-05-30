@@ -23,5 +23,5 @@ COPY --from=builder /opt/slncenter /usr/local/bin/
 # Refer: http://blog.cloud66.com/x509-error-when-using-https-inside-a-docker-container/
 RUN apk add --no-cache --update ca-certificates
 
-EXPOSE 9000
-CMD [ "slncenter", "-l", ":9000"]
+EXPOSE 9008
+CMD [ "slncenter", "-l", ":9008"]
