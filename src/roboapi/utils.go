@@ -39,7 +39,7 @@ func apiResponse(c *gin.Context, respCode RespCode, respData interface{}, respMs
 			"success": true,
 		})
 	} else {
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"rescode": respCode,
 			"data":    nil,
 			"msg":     respMsg,
