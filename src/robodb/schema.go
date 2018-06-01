@@ -6,12 +6,14 @@ import "time"
 type SlnBasicInfo struct {
 	ID            int       `json:"id"`
 	SlnNo         string    `json:"sln_no"`
-	CustomerID    int       `json:"-"`
-	SupplierID    int       `json:"-"`
 	SlnName       string    `json:"sln_name"`
+	SlnType       string    `json:"sln_type"`
 	SlnNum        int       `json:"sln_num"`
 	SlnDate       time.Time `json:"sln_date"`
+	SlnExpired    time.Time `json:"sln_expired"`
+	CustomerID    int       `json:"customer_id"`
 	CustomerPrice float64   `json:"customer_price"`
+	SupplierID    int       `json:"supplier_id"`
 	SupplierPrice float64   `json:"supplier_price"`
 	SlnStatus     string    `json:"sln_status"`
 }
@@ -46,24 +48,61 @@ type WeldingInfo struct {
 type WeldingFile struct {
 	ID       int    `json:"id"`
 	SlnNo    string `json:"sln_no"`
+	UserID   int    `json:"user_id"`
 	SlnRole  string `json:"sln_role"`
 	FileName string `json:"file_name"`
-	FileURL  string `json:"file_url"`
 	FileType string `json:"file_type"`
+	FileURL  string `json:"file_url"`
 }
 
 // welding_device 表
 type WeldingDevice struct {
 	ID          int     `json:"id"`
 	SlnNo       string  `json:"sln_no"`
+	UserID      int     `json:"user_id"`
 	SlnRole     string  `json:"sln_role"`
-	DeviceID    int     `json:"device_id"`
+	DeviceID    string  `json:"device_id"`
 	DeviceType  string  `json:"device_type"`
+	DeviceName  string  `json:"device_name"`
 	DeviceModel string  `json:"device_model"`
 	DevicePrice float64 `json:"device_price"`
 	DeviceNum   int     `json:"device_num"`
 	BrandName   string  `json:"brand_name"`
 	DeviceNote  string  `json:"device_note"`
+}
+
+// sln_supplier_info 表
+type SlnSupplierInfo struct {
+	ID           int       `json:"id"`
+	SlnNo        string    `json:"sln_no"`
+	UserID       int       `json:"user_id"`
+	TotalPrice   float64   `json:"total_price"`
+	FreightPrice float64   `json:"freight_price"`
+	PayRatio     int       `json:"pay_ratio"`
+	ExpiredDate  time.Time `json:"expired_date"`
+	DeliveryDate int       `json:"delivery_date"`
+	SlnDesc      string    `json:"sln_desc"`
+	SlnNote      string    `json:"sln_note"`
+}
+
+// welding_support 表
+type WeldingSupport struct {
+	ID     int     `json:"id"`
+	SlnNo  string  `json:"sln_no"`
+	UserID int     `json:"user_id"`
+	Name   string  `json:"name"`
+	Price  float64 `json:"price"`
+	Note   string  `json:"note"`
+}
+
+// welding_tech_param 表
+type WeldingTechParam struct {
+	ID       int    `json:"id"`
+	SlnNo    string `json:"sln_no"`
+	UserID   int    `json:"user_id"`
+	Name     string `json:"name"`
+	Value    string `json:"value"`
+	UnitName string `json:"unit_name"`
 }
 
 // 数据传输 struct
