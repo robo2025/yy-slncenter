@@ -20,7 +20,9 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 	// use cors
 	router.Use(cors.Default())
 	// use jwt
-	router.Use(JWTAuth())
+	//router.Use(JWTAuth())
+	// use sso auth
+	router.Use(SSOAuth())
 
 	// Register router
 	routerGroup := router.Group("/v1")
