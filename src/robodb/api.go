@@ -43,10 +43,13 @@ func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, er
 	resp.Customer = customer
 
 	// 读取报价数据
+	resp.Supplier = nil
 	if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
 		supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
+		if err != nil {
+			resp.Supplier = supplier
+		}
 	}
-	resp.Supplier = supplier
 
 	return resp, nil
 }
