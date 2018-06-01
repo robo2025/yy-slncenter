@@ -23,8 +23,7 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 		return
 	}
 
-	uid := c.MustGet("uid").(int)
-	slnList, err := robodb.FetchSolutionList(e.db, uid)
+	slnList, err := robodb.FetchSolutionList(e.db, c)
 	if err != nil {
 		log.Error("获取方案列表错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
@@ -47,8 +46,7 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 		return
 	}
 
-	uid := c.MustGet("uid").(int)
-	err = robodb.CreateSolution(e.db, solutionParams, uid)
+	err = robodb.CreateSolution(e.db, solutionParams, c)
 	if err != nil {
 		log.Error("创建方案错误!")
 		apiResponse(c, RespFailed, nil, err.Error())
@@ -64,9 +62,7 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 		return
 	}
 
-	slnNo := c.Param("id")
-	uid := c.MustGet("uid").(int)
-	slnDetail, err := robodb.FetchSolutionDetail(e.db, slnNo, uid)
+	slnDetail, err := robodb.FetchSolutionDetail(e.db, c)
 	if err != nil {
 		log.Error("获取方案细节错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
@@ -91,8 +87,7 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 		return
 	}
 
-	uid := c.MustGet("uid").(int)
-	err = robodb.UpdateSolution(e.db, solutionParams, uid)
+	err = robodb.UpdateSolution(e.db, solutionParams, c)
 	if err != nil {
 		log.Error("更新方案列表错误!")
 		apiResponse(c, RespFailed, nil, err.Error())
@@ -108,17 +103,15 @@ func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 	}
 
 	// 解析请求
-	uid := c.MustGet("uid").(int)
-	slnNo := c.Param("id")
 	offerParams := &robodb.OfferParams{}
-	offerParams.SlnNo = slnNo
+	offerParams.SlnNo = c.Param("id")
 	err := c.BindJSON(offerParams)
 	if err != nil {
 		apiResponse(c, RespFailed, nil, err.Error())
 		return
 	}
 
-	err = robodb.OfferSolution(e.db, offerParams, uid)
+	err = robodb.OfferSolution(e.db, offerParams, c)
 
 	if err != nil {
 		log.Error("方案报价错误!")

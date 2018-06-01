@@ -42,9 +42,23 @@ func SSOAuth() gin.HandlerFunc {
 			return
 		}
 
+		// 设置全局参数
 		c.Set("isAuth", true)
 		c.Set("uid", ssoUser.ID)
-		c.Set("userRole", ssoUser.UserType)
+
+		// 1:普通用户 2:供应商 3:管理员 4:超级管理员
+		switch ssoUser.UserType {
+		case 1:
+			c.Set("user_type", "customer")
+		case 2:
+			c.Set("user_type", "supplier")
+		case 3:
+			c.Set("user_type", "admin")
+		case 4:
+			c.Set("user_type", "super")
+		default:
+			c.Set("user_type", "unknown")
+		}
 	}
 }
 
