@@ -27,10 +27,12 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 
 	// sln_basic_info 表
 	slnBasicInfo := params.SlnBasicInfo
+	currentDate := time.Now()
 	if slnBasicInfo != nil {
 		slnBasicInfo.SlnNo = slnNo
 		slnBasicInfo.CustomerID = uid
-		slnBasicInfo.SlnDate = time.Now()
+		slnBasicInfo.SlnDate = currentDate
+		slnBasicInfo.SlnExpired = currentDate.AddDate(0, 0, 90)
 	}
 
 	// sln_user_info 表
@@ -50,6 +52,7 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	if len(params.WeldingDevice) != 0 {
 		for _, el := range params.WeldingDevice {
 			el.SlnNo = slnNo
+			el.UserID = uid
 			el.SlnRole = "C"
 			weldingDevice = append(weldingDevice, el)
 		}
@@ -60,6 +63,7 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	if len(params.WeldingFile) != 0 {
 		for _, el := range params.WeldingFile {
 			el.SlnNo = slnNo
+			el.UserID = uid
 			el.SlnRole = "C"
 			weldingFile = append(weldingFile, el)
 		}
