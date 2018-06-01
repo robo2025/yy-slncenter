@@ -100,3 +100,30 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 		apiResponse(c, RespSuccess, nil, "更新方案成功")
 	}
 }
+
+func (e *GinEnv) viewOfferSolution(c *gin.Context) {
+	isAuth := c.GetBool("isAuth")
+	if !isAuth {
+		return
+	}
+
+	// 解析请求
+	uid := c.MustGet("uid").(int)
+	slnNo := c.Param("id")
+	offerParams := &robodb.OfferParams{}
+	offerParams.SlnNo = slnNo
+	err := c.BindJSON(offerParams)
+	if err != nil {
+		apiResponse(c, RespFailed, nil, err.Error())
+		return
+	}
+
+	err = robodb.OfferSolution(e.db, offerParams, uid)
+
+	if err != nil {
+		log.Error("方案报价错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, nil, "")
+	}
+}

@@ -25,6 +25,8 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	// 准备数据
 	slnNo := strings.TrimSpace(params.SlnNo)
 
+	params.UID = uid
+
 	// sln_basic_info 表
 	slnBasicInfo := params.SlnBasicInfo
 	currentDate := time.Now()
@@ -78,6 +80,77 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 		WeldingInfo:   weldingInfo,
 		WeldingDevice: weldingDevice,
 		WeldingFile:   weldingFile,
+	}
+	return resp
+}
+
+// 准备方案报价数据
+func prepareOfferData(params *OfferParams, uid int) *OfferParams {
+	// 准备数据
+	slnNo := strings.TrimSpace(params.SlnNo)
+
+	params.UID = uid
+
+	// sln_supplier_info
+	slnSupplierInfo := params.SlnSupplierInfo
+	currentDate := time.Now()
+	if slnSupplierInfo != nil {
+		slnSupplierInfo.SlnNo = slnNo
+		slnSupplierInfo.UserID = uid
+		slnSupplierInfo.ExpiredDate = currentDate.AddDate(0, 0, 30)
+	}
+
+	// welding_device 表
+	weldingDevice := make([]WeldingDevice, 0)
+	if len(params.WeldingDevice) != 0 {
+		for _, el := range params.WeldingDevice {
+			el.SlnNo = slnNo
+			el.UserID = uid
+			el.SlnRole = "S"
+			weldingDevice = append(weldingDevice, el)
+		}
+	}
+
+	// welding_support 表
+	weldingSupport := make([]WeldingSupport, 0)
+	if len(params.WeldingSupport) != 0 {
+		for _, el := range params.WeldingSupport {
+			el.SlnNo = slnNo
+			el.UserID = uid
+			weldingSupport = append(weldingSupport, el)
+		}
+	}
+
+	// welding_tech_param 表
+	weldingTechParam := make([]WeldingTechParam, 0)
+	if len(params.WeldingTechParam) != 0 {
+		for _, el := range params.WeldingTechParam {
+			el.SlnNo = slnNo
+			el.UserID = uid
+			weldingTechParam = append(weldingTechParam, el)
+		}
+	}
+
+	// welding_file 表
+	weldingFile := make([]WeldingFile, 0)
+	if len(params.WeldingFile) != 0 {
+		for _, el := range params.WeldingFile {
+			el.SlnNo = slnNo
+			el.UserID = uid
+			el.SlnRole = "C"
+			weldingFile = append(weldingFile, el)
+		}
+	}
+
+	// 返回组合数据
+	resp := &OfferParams{
+		SlnNo:            slnNo,
+		UID:              uid,
+		SlnSupplierInfo:  slnSupplierInfo,
+		WeldingDevice:    weldingDevice,
+		WeldingSupport:   weldingSupport,
+		WeldingTechParam: weldingTechParam,
+		WeldingFile:      weldingFile,
 	}
 	return resp
 }
@@ -206,6 +279,98 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 		}
 
 		// 插入所有的新数据
+		for _, el := range params.WeldingFile {
+			err = tx.Create(&el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+// 写入方案数据
+func writeOfferData(db *gorm.DB, params *OfferParams) error {
+	var err error
+
+	slnBasicInfo := &SlnBasicInfo{}
+	db.Where("sln_no = ?", params.SlnNo).First(slnBasicInfo)
+	if slnBasicInfo.ID == 0 {
+		return errors.New("找不到相应方案")
+	}
+
+	if slnBasicInfo.SlnStatus != string(SlnStatusPublish) {
+		return errors.New("该方案不可以报价")
+	}
+
+	// 写入数据库
+	tx := db.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	// 更新 sln_basic_info 表
+	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
+		SupplierID:    params.SlnSupplierInfo.UserID,
+		SupplierPrice: params.SlnSupplierInfo.TotalPrice,
+		SlnStatus:     string(SlnStatusOffer),
+	})
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 写入 sln_supplier_info 表
+	err = tx.Create(params.SlnSupplierInfo).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 写入 welding_device 表
+	if len(params.WeldingDevice) != 0 {
+		for _, el := range params.WeldingDevice {
+			err = tx.Create(&el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	// 写入 welding_support 表
+	if len(params.WeldingSupport) != 0 {
+		for _, el := range params.WeldingSupport {
+			err = tx.Create(&el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	// 写入 welding_tech_param 表
+	if len(params.WeldingTechParam) != 0 {
+		for _, el := range params.WeldingTechParam {
+			err = tx.Create(&el).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	// 写入 welding_file 表
+	if len(params.WeldingFile) != 0 {
 		for _, el := range params.WeldingFile {
 			err = tx.Create(&el).Error
 			if err != nil {

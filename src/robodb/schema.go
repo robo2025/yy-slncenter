@@ -8,7 +8,6 @@ type SlnBasicInfo struct {
 	SlnNo         string    `json:"sln_no"`
 	SlnName       string    `json:"sln_name"`
 	SlnType       string    `json:"sln_type"`
-	SlnNum        int       `json:"sln_num"`
 	SlnDate       time.Time `json:"sln_date"`
 	SlnExpired    time.Time `json:"sln_expired"`
 	CustomerID    int       `json:"customer_id"`
@@ -105,7 +104,7 @@ type WeldingTechParam struct {
 	UnitName string `json:"unit_name"`
 }
 
-// 数据传输 struct
+// 创建方案 struct
 type SolutionParams struct {
 	SlnNo         string          `json:"sln_no" binding:"required"`
 	UID           int             `json:"-"`
@@ -115,3 +114,23 @@ type SolutionParams struct {
 	WeldingDevice []WeldingDevice `json:"welding_device"`
 	WeldingFile   []WeldingFile   `json:"welding_file"`
 }
+
+// 供应商报价 struct
+type OfferParams struct {
+	SlnNo            string             `json:"sln_no" binding:"required"`
+	UID              int                `json:"-"`
+	SlnSupplierInfo  *SlnSupplierInfo   `json:"sln_supplier_info"`
+	WeldingDevice    []WeldingDevice    `json:"welding_device"`
+	WeldingTechParam []WeldingTechParam `json:"welding_tech_param"`
+	WeldingSupport   []WeldingSupport   `json:"welding_support"`
+	WeldingFile      []WeldingFile      `json:"welding_file"`
+}
+
+type SlnStatus string
+
+const (
+	SlnStatusSave    SlnStatus = "S"
+	SlnStatusPublish SlnStatus = "P"
+	SlnStatusOffer   SlnStatus = "M"
+	SlnStatusExpired SlnStatus = "E"
+)

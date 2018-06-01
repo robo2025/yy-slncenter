@@ -36,4 +36,5 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.POST("/sln", env.viewCreateSolution)
 	rg.GET("/sln/:id", env.viewSolutionDetail)
 	rg.PUT("/sln/:id", env.viewUpdateSolution)
+	rg.POST("/offer/:id", env.viewOfferSolution)
 }

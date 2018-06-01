@@ -55,3 +55,9 @@ func UpdateSolution(db *gorm.DB, params *SolutionParams, uid int) error {
 	dbParams := prepareSolutionData(params, uid)
 	return updateSolutionData(db, dbParams)
 }
+
+// 方案报价
+func OfferSolution(db *gorm.DB, params *OfferParams, uid int) error {
+	dbParams := prepareOfferData(params, uid)
+	return writeOfferData(db, dbParams)
+}
