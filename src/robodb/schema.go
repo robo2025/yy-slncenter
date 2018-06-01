@@ -103,34 +103,3 @@ type WeldingTechParam struct {
 	Value    string `json:"value"`
 	UnitName string `json:"unit_name"`
 }
-
-// 创建方案 struct
-type SolutionParams struct {
-	SlnNo         string          `json:"sln_no" binding:"required"`
-	UID           int             `json:"-"`
-	SlnBasicInfo  *SlnBasicInfo   `json:"sln_basic_info"`
-	SlnUserInfo   *SlnUserInfo    `json:"sln_user_info"`
-	WeldingInfo   *WeldingInfo    `json:"welding_info"`
-	WeldingDevice []WeldingDevice `json:"welding_device"`
-	WeldingFile   []WeldingFile   `json:"welding_file"`
-}
-
-// 供应商报价 struct
-type OfferParams struct {
-	SlnNo            string             `json:"sln_no" binding:"required"`
-	UID              int                `json:"-"`
-	SlnSupplierInfo  *SlnSupplierInfo   `json:"sln_supplier_info"`
-	WeldingDevice    []WeldingDevice    `json:"welding_device"`
-	WeldingTechParam []WeldingTechParam `json:"welding_tech_param"`
-	WeldingSupport   []WeldingSupport   `json:"welding_support"`
-	WeldingFile      []WeldingFile      `json:"welding_file"`
-}
-
-type SlnStatus string
-
-const (
-	SlnStatusSave    SlnStatus = "S"
-	SlnStatusPublish SlnStatus = "P"
-	SlnStatusOffer   SlnStatus = "M"
-	SlnStatusExpired SlnStatus = "E"
-)

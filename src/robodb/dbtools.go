@@ -382,3 +382,62 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 
 	return tx.Commit().Error
 }
+
+// 查询用户方案细节
+func readSolutionData(db *gorm.DB, slnID string, uid int) (*SolutionParams, error) {
+	slnBasicInfo := &SlnBasicInfo{}
+	slnUserInfo := &SlnUserInfo{}
+	WeldingInfo := &WeldingInfo{}
+	weldingDevice := []WeldingDevice{}
+	weldingFile := []WeldingFile{}
+
+	db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(slnBasicInfo)
+	if slnBasicInfo.ID == 0 {
+		return nil, errors.New("找不到相应方案")
+	}
+	db.Where("sln_no = ?", slnID).First(slnUserInfo)
+	db.Where("sln_no = ?", slnID).First(WeldingInfo)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingDevice)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingFile)
+
+	resp := &SolutionParams{
+		SlnNo:         slnID,
+		SlnBasicInfo:  slnBasicInfo,
+		SlnUserInfo:   slnUserInfo,
+		WeldingInfo:   WeldingInfo,
+		WeldingDevice: weldingDevice,
+		WeldingFile:   weldingFile,
+	}
+
+	return resp, nil
+}
+
+// 查询供应商报价细节
+func readOfferData(db *gorm.DB, slnID string, uid int) (*OfferParams, error) {
+	slnSupplierInfo := &SlnSupplierInfo{}
+	weldingDevice := []WeldingDevice{}
+	weldingTechParams := []WeldingTechParam{}
+	weldingSupport := []WeldingSupport{}
+	weldingFile := []WeldingFile{}
+
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).First(slnSupplierInfo)
+	if slnSupplierInfo.ID == 0 {
+		return nil, errors.New("找不到相应报价")
+	}
+
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingTechParams)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingSupport)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingDevice)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingFile)
+
+	resp := &OfferParams{
+		SlnNo:            slnID,
+		SlnSupplierInfo:  slnSupplierInfo,
+		WeldingDevice:    weldingDevice,
+		WeldingTechParam: weldingTechParams,
+		WeldingSupport:   weldingSupport,
+		WeldingFile:      weldingFile,
+	}
+
+	return resp, nil
+}

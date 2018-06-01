@@ -26,33 +26,27 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 }
 
 // 获取方案细节
-func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionParams, error) {
+func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, error) {
 	slnID := c.Param("id")
 	uid := c.MustGet("uid").(int)
 
-	slnBasicInfo := &SlnBasicInfo{}
-	slnUserInfo := &SlnUserInfo{}
-	WeldingInfo := &WeldingInfo{}
-	weldingDevice := []WeldingDevice{}
-	weldingFile := []WeldingFile{}
+	var err error
+	customer := &SolutionParams{}
+	supplier := &OfferParams{}
+	resp := &SolutionDetailParams{}
 
-	db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(slnBasicInfo)
-	if slnBasicInfo.ID == 0 {
-		return nil, errors.New("找不到相应方案")
+	// 读取用户询价数据
+	customer, err = readSolutionData(db, slnID, uid)
+	if err != nil {
+		return nil, err
 	}
-	db.Where("sln_no = ?", slnID).First(slnUserInfo)
-	db.Where("sln_no = ?", slnID).First(WeldingInfo)
-	db.Where("sln_no = ? AND sln_role = ?", slnID, "C").Find(&weldingDevice)
-	db.Where("sln_no = ? AND sln_role = ?", slnID, "C").Find(&weldingFile)
+	resp.Customer = customer
 
-	resp := &SolutionParams{
-		SlnNo:         slnID,
-		SlnBasicInfo:  slnBasicInfo,
-		SlnUserInfo:   slnUserInfo,
-		WeldingInfo:   WeldingInfo,
-		WeldingDevice: weldingDevice,
-		WeldingFile:   weldingFile,
+	// 读取报价数据
+	if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
+		supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
 	}
+	resp.Supplier = supplier
 
 	return resp, nil
 }
