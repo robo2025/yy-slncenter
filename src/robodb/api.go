@@ -46,7 +46,7 @@ func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, er
 	resp.Supplier = nil
 	if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
 		supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
-		if err != nil {
+		if err == nil {
 			resp.Supplier = supplier
 		}
 	}
