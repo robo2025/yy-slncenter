@@ -77,7 +77,11 @@ func parseTokenInfo(auth string) (*SSOUser, error) {
 	// 请求 SSO URL
 	sigChan := make(chan error, 1)
 	go func() {
-		jsonData, err = roboweb.HttpRequest("GET", ssoURL, auth)
+		header := map[string]string{
+			"Authorization": auth,
+			"Content-type":  "application/json",
+		}
+		jsonData, err = roboweb.HttpRequest("GET", ssoURL, header, nil)
 		sigChan <- err
 	}()
 
