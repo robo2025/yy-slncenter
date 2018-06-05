@@ -119,8 +119,8 @@ CREATE TABLE `welding_info` (
   `welding_method`     varchar(20)          DEFAULT NULL,
   `welding_gas`        varchar(20)          DEFAULT NULL,
   `gas_cost`           varchar(20)          DEFAULT NULL,
-  `max_height`         decimal(6, 1)        DEFAULT NULL,
-  `max_radius`         decimal(5, 2)        DEFAULT NULL,
+  `max_height`         decimal(8, 2)        DEFAULT NULL,
+  `max_radius`         decimal(8, 2)        DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sln_no` (`sln_no`)
 )
