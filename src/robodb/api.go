@@ -75,3 +75,25 @@ func OfferSolution(db *gorm.DB, params *OfferParams, c *gin.Context) error {
 	dbParams := prepareOfferData(params, uid)
 	return writeOfferData(db, dbParams)
 }
+
+// RPC 查询
+func FetchSolutionRPC(db *gorm.DB, params *SolutionRPCReqParams) (map[string]interface{}, error) {
+
+	uid := params.UID
+	resp := make(map[string]interface{})
+
+	for _, el := range params.Solution {
+		solutionRPC, err := readSolutionRPCData(db, el, uid)
+		if err != nil {
+			resp[el] = &SolutionRPCParams{
+				Success:  false,
+				ErrorMsg: err.Error(),
+			}
+		} else {
+			solutionRPC.Success = true
+			resp[el] = solutionRPC
+		}
+	}
+
+	return resp, nil
+}

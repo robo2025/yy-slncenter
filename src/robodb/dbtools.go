@@ -441,3 +441,29 @@ func readOfferData(db *gorm.DB, slnID string, uid int) (*OfferParams, error) {
 
 	return resp, nil
 }
+
+// 提供 RPC 查询
+func readSolutionRPCData(db *gorm.DB, slnID string, uid int) (*SolutionRPCParams, error) {
+	slnBasicInfo := &SlnBasicInfo{}
+	db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(slnBasicInfo)
+	if slnBasicInfo.ID == 0 {
+		return nil, errors.New("找不到相应方案")
+	}
+
+	if slnBasicInfo.SlnStatus != string(SlnStatusOffer) {
+		return nil, errors.New("该方案不属于已报价状态")
+	}
+
+	slnSupplierInfo := &SlnSupplierInfo{}
+	db.Where("sln_no = ? AND user_id = ?", slnID, slnBasicInfo.SupplierID).First(slnSupplierInfo)
+	if slnSupplierInfo.ID == 0 {
+		return nil, errors.New("找不到相应报价")
+	}
+
+	resp := &SolutionRPCParams{
+		SlnBasicInfo:    slnBasicInfo,
+		SlnSupplierInfo: slnSupplierInfo,
+	}
+
+	return resp, nil
+}
