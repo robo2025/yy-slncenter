@@ -37,7 +37,7 @@ func SSOAuth() gin.HandlerFunc {
 		// 解析 Token
 		ssoUser, err := parseTokenInfo(token)
 		if err != nil {
-			apiResponse(c, RespTokenFailed, nil, err.Error())
+			apiResponse(c, RespTokenFailed, nil, "用户鉴权失败")
 			c.Set("isAuth", false)
 			return
 		}
