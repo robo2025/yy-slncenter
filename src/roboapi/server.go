@@ -13,21 +13,23 @@ type GinEnv struct {
 
 func StartWebService(bindAddr string, db *gorm.DB) {
 
+	// Set gin context
 	gin.SetMode(gin.ReleaseMode)
+	router := gin.Default()
 	env := &GinEnv{db: db}
 
-	router := gin.Default()
-	// use cors
-	router.Use(cors.Default())
-	// use jwt
-	//router.Use(JWTAuth())
-	// use sso auth
-	router.Use(SSOAuth())
+	// Set API
+	apiGroup := router.Group("/v1")
+	apiGroup.Use(cors.Default())
+	apiGroup.Use(SSOAuth())
+	registerApiView(apiGroup, env)
 
-	// Register router
-	routerGroup := router.Group("/v1")
-	registerApiView(routerGroup, env)
+	// Set RPC
+	rpcGroup := router.Group("/rpc")
+	rpcGroup.Use(cors.Default())
+	registerRPCView(rpcGroup, env)
 
+	// Run server
 	fmt.Println("API listen on: ", bindAddr)
 	router.Run(bindAddr)
 }
@@ -39,4 +41,8 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/sln/:id", env.viewSolutionDetail)
 	rg.PUT("/sln/:id", env.viewUpdateSolution)
 	rg.POST("/offer/:id", env.viewOfferSolution)
+}
+
+func registerRPCView(rg *gin.RouterGroup, env *GinEnv) {
+	rg.GET("/", env.rpcIndex)
 }
