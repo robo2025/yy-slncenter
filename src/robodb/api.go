@@ -2,9 +2,9 @@ package robodb
 
 import (
 	"github.com/jinzhu/gorm"
-	"errors"
 	"github.com/gin-gonic/gin"
 	"strings"
+	log "github.com/sirupsen/logrus"
 )
 
 // 获取方案列表
@@ -20,8 +20,9 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	}
 
 	if len(dbData) == 0 {
-		return nil, errors.New("找不到方案列表")
+		log.Debug("找不到方案列表")
 	}
+
 	return dbData, nil
 }
 
