@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"strings"
 	"strconv"
+	"errors"
 )
 
 // 获取方案列表
@@ -88,6 +89,7 @@ func FetchSolutionRPC(db *gorm.DB, params *SolutionRPCReqParams) (map[string]int
 
 	uid := params.UID
 	resp := make(map[string]interface{})
+	respFlag := true
 
 	for _, el := range params.Solution {
 		solutionRPC, err := readSolutionRPCData(db, el, uid)
@@ -96,12 +98,17 @@ func FetchSolutionRPC(db *gorm.DB, params *SolutionRPCReqParams) (map[string]int
 				Success:  false,
 				ErrorMsg: err.Error(),
 			}
+			respFlag = false
 		} else {
 			resp[el] = solutionRPC
 		}
 	}
 
-	return resp, nil
+	if respFlag {
+		return resp, nil
+	}
+
+	return resp, errors.New("部分方案状态错误")
 }
 
 // RPC 查询方案细节

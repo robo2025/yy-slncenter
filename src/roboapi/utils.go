@@ -58,7 +58,7 @@ func apiResponse(c *gin.Context, respCode RespCode, respData interface{}, respMs
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"rescode": respCode,
-			"data":    nil,
+			"data":    respData,
 			"msg":     respMsg,
 			"success": false,
 		})

@@ -20,7 +20,7 @@ func (e *GinEnv) rpcSolution(c *gin.Context) {
 
 	slnDict, err := robodb.FetchSolutionRPC(e.db, rpcParams)
 	if err != nil {
-		apiResponse(c, RespNoData, nil, err.Error())
+		apiResponse(c, RespFailed, slnDict, err.Error())
 	} else {
 		apiResponse(c, RespSuccess, slnDict, "")
 	}
