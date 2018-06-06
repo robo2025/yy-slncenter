@@ -25,3 +25,11 @@ func (e *GinEnv) rpcSolution(c *gin.Context) {
 		apiResponse(c, RespSuccess, slnDict, "")
 	}
 }
+func (e *GinEnv) rpcSolutionDetail(c *gin.Context) {
+	resp, err := robodb.FetchSolutionRPCDetail(e.db, c)
+	if err != nil {
+		apiResponse(c, RespFailed, resp, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, resp, "")
+	}
+}

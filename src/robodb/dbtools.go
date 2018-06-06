@@ -474,6 +474,7 @@ func readSolutionRPCData(db *gorm.DB, slnID string, uid int) (*SolutionRPCParams
 	resp := &SolutionRPCParams{
 		SlnBasicInfo:    slnBasicInfo,
 		SlnSupplierInfo: slnSupplierInfo,
+		Success:         true,
 	}
 
 	return resp, nil

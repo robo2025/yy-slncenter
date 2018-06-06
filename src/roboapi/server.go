@@ -46,4 +46,5 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 func registerRPCView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/", env.rpcIndex)
 	rg.POST("/sln", env.rpcSolution)
+	rg.GET("/sln/:id", env.rpcSolutionDetail)
 }

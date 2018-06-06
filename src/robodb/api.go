@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/gin-gonic/gin"
 	"strings"
+	"strconv"
 )
 
 // 获取方案列表
@@ -96,10 +97,19 @@ func FetchSolutionRPC(db *gorm.DB, params *SolutionRPCReqParams) (map[string]int
 				ErrorMsg: err.Error(),
 			}
 		} else {
-			solutionRPC.Success = true
 			resp[el] = solutionRPC
 		}
 	}
 
 	return resp, nil
+}
+
+// RPC 查询方案细节
+func FetchSolutionRPCDetail(db *gorm.DB, c *gin.Context) (*SolutionRPCParams, error) {
+	slnID := c.Param("id")
+	uid, err := strconv.Atoi(c.Query("uid"))
+	if err != nil {
+		return nil, err
+	}
+	return readSolutionRPCData(db, slnID, uid)
 }
