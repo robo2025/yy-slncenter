@@ -8,18 +8,19 @@ import (
 
 // url: /
 func (e *GinEnv) viewIndex(c *gin.Context) {
-	isAuth := c.GetBool("isAuth")
-	if !isAuth {
+	verifyRole := "pass"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
-
 	apiResponse(c, RespSuccess, nil, "")
 }
 
 // url: /sln
 func (e *GinEnv) viewSolutionList(c *gin.Context) {
-	isAuth := c.GetBool("isAuth")
-	if !isAuth {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -34,8 +35,9 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 
 // post url: /sln
 func (e *GinEnv) viewCreateSolution(c *gin.Context) {
-	isAuth := c.GetBool("isAuth")
-	if !isAuth {
+	verifyRole := "customer"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -57,8 +59,9 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
-	isAuth := c.GetBool("isAuth")
-	if !isAuth {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -73,8 +76,9 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 
 // put url: /sln/:id
 func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
-	isAuth := c.GetBool("isAuth")
-	if !isAuth {
+	verifyRole := "customer"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -96,9 +100,11 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 	}
 }
 
+// post url: /offer/:id
 func (e *GinEnv) viewOfferSolution(c *gin.Context) {
-	isAuth := c.GetBool("isAuth")
-	if !isAuth {
+	verifyRole := "supplier"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 

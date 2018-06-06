@@ -4,23 +4,30 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/gin-gonic/gin"
 	"strings"
-	log "github.com/sirupsen/logrus"
 )
 
 // 获取方案列表
 func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	uid := c.MustGet("uid").(int)
-	is_type := c.Query("is_type")
+	role := c.MustGet("role").(int)
+	isType := c.Query("is_type")
 
 	dbData := []SlnBasicInfo{}
-	if is_type != "" && is_type != "all" {
-		db.Where("customer_id = ? AND sln_status = ?", uid, strings.ToUpper(is_type)).Find(&dbData)
-	} else {
-		db.Where("customer_id = ?", uid).Find(&dbData)
-	}
 
-	if len(dbData) == 0 {
-		log.Debug("找不到方案列表")
+	switch role {
+	case 1: // customer
+		if isType != "" && isType != "all" {
+			db.Where("customer_id = ? AND sln_status = ?", uid, strings.ToUpper(isType)).Find(&dbData)
+		} else {
+			db.Where("customer_id = ?", uid).Find(&dbData)
+		}
+
+	case 2, 3, 4: // supplier
+		if isType != "" && isType != "all" {
+			db.Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
+		} else {
+			db.Find(&dbData)
+		}
 	}
 
 	return dbData, nil
@@ -29,7 +36,6 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 // 获取方案细节
 func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, error) {
 	slnID := c.Param("id")
-	uid := c.MustGet("uid").(int)
 
 	var err error
 	customer := &SolutionParams{}
@@ -37,7 +43,7 @@ func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, er
 	resp := &SolutionDetailParams{}
 
 	// 读取用户询价数据
-	customer, err = readSolutionData(db, slnID, uid)
+	customer, err = readSolutionData(db, slnID, c)
 	if err != nil {
 		return nil, err
 	}

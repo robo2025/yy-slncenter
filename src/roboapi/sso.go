@@ -29,7 +29,7 @@ func SSOAuth() gin.HandlerFunc {
 		// 获取 Token
 		token := c.Request.Header.Get("Authorization")
 		if token == "" {
-			apiResponse(c, RespTokenNotExist, nil, "请求中没有 Token")
+			// apiResponse(c, RespTokenNotExist, nil, "请求中没有 Token")
 			c.Set("isAuth", false)
 			return
 		}
@@ -37,7 +37,7 @@ func SSOAuth() gin.HandlerFunc {
 		// 解析 Token
 		ssoUser, err := parseTokenInfo(token)
 		if err != nil {
-			apiResponse(c, RespTokenFailed, nil, "用户鉴权失败")
+			// apiResponse(c, RespTokenFailed, nil, "用户鉴权失败")
 			c.Set("isAuth", false)
 			return
 		}
@@ -45,20 +45,7 @@ func SSOAuth() gin.HandlerFunc {
 		// 设置全局参数
 		c.Set("isAuth", true)
 		c.Set("uid", ssoUser.ID)
-
-		// 1:普通用户 2:供应商 3:管理员 4:超级管理员
-		switch ssoUser.UserType {
-		case 1:
-			c.Set("user_type", "customer")
-		case 2:
-			c.Set("user_type", "supplier")
-		case 3:
-			c.Set("user_type", "admin")
-		case 4:
-			c.Set("user_type", "super")
-		default:
-			c.Set("user_type", "unknown")
-		}
+		c.Set("role", ssoUser.UserType)
 	}
 }
 

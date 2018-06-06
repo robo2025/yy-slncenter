@@ -6,6 +6,7 @@ import (
 	"time"
 	"errors"
 	"strings"
+	"github.com/gin-gonic/gin"
 )
 
 // InitDB 初始化数据库
@@ -384,21 +385,31 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 }
 
 // 查询用户方案细节
-func readSolutionData(db *gorm.DB, slnID string, uid int) (*SolutionParams, error) {
+func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*SolutionParams, error) {
 	slnBasicInfo := &SlnBasicInfo{}
 	slnUserInfo := &SlnUserInfo{}
 	WeldingInfo := &WeldingInfo{}
 	weldingDevice := []WeldingDevice{}
 	weldingFile := []WeldingFile{}
 
-	db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(slnBasicInfo)
+	uid := c.MustGet("uid").(int)
+	role := c.MustGet("role").(int)
+	switch role {
+	case 1: // customer
+		db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(slnBasicInfo)
+	case 2, 3, 4: // supplier, admin, super
+		db.Where("sln_no = ?", slnID).First(slnBasicInfo)
+	}
+
 	if slnBasicInfo.ID == 0 {
 		return nil, errors.New("找不到相应方案")
 	}
+
+	customerID := slnBasicInfo.CustomerID
 	db.Where("sln_no = ?", slnID).First(slnUserInfo)
 	db.Where("sln_no = ?", slnID).First(WeldingInfo)
-	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingDevice)
-	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingFile)
+	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&weldingDevice)
+	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&weldingFile)
 
 	resp := &SolutionParams{
 		SlnNo:         slnID,
