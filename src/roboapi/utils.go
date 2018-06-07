@@ -75,28 +75,39 @@ func checkAuthRole(c *gin.Context, role string) error {
 	}
 
 	userRole := c.MustGet("role").(int)
+	var err error
 
 	switch role {
 	case "", "customer":
 		if userRole != int(RoleCustomer) {
-			return errors.New("用户角色不是普通用户")
+			err = errors.New("用户角色不是普通用户")
+			apiResponse(c, RespNoAuth, "", err.Error())
+			return err
 		}
 	case "supplier":
 		if userRole != int(RoleSupplier) {
-			return errors.New("用户角色不是供应商")
+			err = errors.New("用户角色不是供应商")
+			apiResponse(c, RespNoAuth, "", err.Error())
+			return err
 		}
 	case "admin":
 		if userRole != int(RoleAdmin) {
-			return errors.New("用户角色不是管理员")
+			err = errors.New("用户角色不是管理员")
+			apiResponse(c, RespNoAuth, "", err.Error())
+			return err
 		}
 	case "super":
 		if userRole != int(RoleSuper) {
-			return errors.New("用户角色不是超级管理员")
+			err = errors.New("用户角色不是超级管理员")
+			apiResponse(c, RespNoAuth, "", err.Error())
+			return err
 		}
 	case "pass":
 		return nil
 	default:
-		return errors.New("用户角色错误")
+		err = errors.New("用户角色错误")
+		apiResponse(c, RespNoAuth, "", err.Error())
+		return err
 	}
 
 	return nil

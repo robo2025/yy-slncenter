@@ -10,7 +10,6 @@ import (
 func (e *GinEnv) viewIndex(c *gin.Context) {
 	verifyRole := "pass"
 	if err := checkAuthRole(c, verifyRole); err != nil {
-		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 	apiResponse(c, RespSuccess, nil, "")
@@ -20,7 +19,6 @@ func (e *GinEnv) viewIndex(c *gin.Context) {
 func (e *GinEnv) viewSolutionList(c *gin.Context) {
 	verifyRole := c.Query("role")
 	if err := checkAuthRole(c, verifyRole); err != nil {
-		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -37,7 +35,6 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 	verifyRole := "customer"
 	if err := checkAuthRole(c, verifyRole); err != nil {
-		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -61,7 +58,6 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 	verifyRole := c.Query("role")
 	if err := checkAuthRole(c, verifyRole); err != nil {
-		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -78,7 +74,6 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 	verifyRole := "customer"
 	if err := checkAuthRole(c, verifyRole); err != nil {
-		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
@@ -104,7 +99,6 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 	verifyRole := "supplier"
 	if err := checkAuthRole(c, verifyRole); err != nil {
-		apiResponse(c, RespTokenFailed, nil, err.Error())
 		return
 	}
 
