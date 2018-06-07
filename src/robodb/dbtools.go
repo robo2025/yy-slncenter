@@ -34,8 +34,8 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 	if slnBasicInfo != nil {
 		slnBasicInfo.SlnNo = slnNo
 		slnBasicInfo.CustomerID = uid
-		slnBasicInfo.SlnDate = currentDate
-		slnBasicInfo.SlnExpired = currentDate.AddDate(0, 0, 90)
+		slnBasicInfo.SlnDate = int(currentDate.Unix())
+		slnBasicInfo.SlnExpired = int(currentDate.AddDate(0, 0, 90).Unix())
 	}
 
 	// sln_user_info 表
@@ -98,7 +98,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	if slnSupplierInfo != nil {
 		slnSupplierInfo.SlnNo = slnNo
 		slnSupplierInfo.UserID = uid
-		slnSupplierInfo.ExpiredDate = currentDate.AddDate(0, 0, 30)
+		slnSupplierInfo.ExpiredDate = int(currentDate.AddDate(0, 0, 30).Unix())
 	}
 
 	// welding_device 表

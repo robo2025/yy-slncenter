@@ -1,20 +1,18 @@
 package robodb
 
-import "time"
-
 // sln_basic_info 表
 type SlnBasicInfo struct {
-	ID            int       `json:"id"`
-	SlnNo         string    `json:"sln_no"`
-	SlnName       string    `json:"sln_name"`
-	SlnType       string    `json:"sln_type"`
-	SlnDate       time.Time `json:"sln_date"`
-	SlnExpired    time.Time `json:"sln_expired"`
-	CustomerID    int       `json:"customer_id"`
-	CustomerPrice float64   `json:"customer_price"`
-	SupplierID    int       `json:"supplier_id"`
-	SupplierPrice float64   `json:"supplier_price"`
-	SlnStatus     string    `json:"sln_status"`
+	ID            int     `json:"id"`
+	SlnNo         string  `json:"sln_no"`
+	SlnName       string  `json:"sln_name"`
+	SlnType       string  `json:"sln_type"`
+	SlnDate       int     `json:"sln_date"`
+	SlnExpired    int     `json:"sln_expired"`
+	CustomerID    int     `json:"customer_id"`
+	CustomerPrice float64 `json:"customer_price"`
+	SupplierID    int     `json:"supplier_id"`
+	SupplierPrice float64 `json:"supplier_price"`
+	SlnStatus     string  `json:"sln_status"`
 }
 
 // sln_user_info 表
@@ -72,16 +70,16 @@ type WeldingDevice struct {
 
 // sln_supplier_info 表
 type SlnSupplierInfo struct {
-	ID           int       `json:"id"`
-	SlnNo        string    `json:"sln_no"`
-	UserID       int       `json:"user_id"`
-	TotalPrice   float64   `json:"total_price"`
-	FreightPrice float64   `json:"freight_price"`
-	PayRatio     int       `json:"pay_ratio"`
-	ExpiredDate  time.Time `json:"expired_date"`
-	DeliveryDate int       `json:"delivery_date"`
-	SlnDesc      string    `json:"sln_desc"`
-	SlnNote      string    `json:"sln_note"`
+	ID           int     `json:"id"`
+	SlnNo        string  `json:"sln_no"`
+	UserID       int     `json:"user_id"`
+	TotalPrice   float64 `json:"total_price"`
+	FreightPrice float64 `json:"freight_price"`
+	PayRatio     int     `json:"pay_ratio"`
+	ExpiredDate  int     `json:"expired_date"`
+	DeliveryDate int     `json:"delivery_date"`
+	SlnDesc      string  `json:"sln_desc"`
+	SlnNote      string  `json:"sln_note"`
 }
 
 // welding_support 表
