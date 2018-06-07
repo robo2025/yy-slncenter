@@ -54,18 +54,20 @@ type WeldingFile struct {
 
 // welding_device 表
 type WeldingDevice struct {
-	ID          int     `json:"id"`
-	SlnNo       string  `json:"sln_no"`
-	UserID      int     `json:"user_id"`
-	SlnRole     string  `json:"sln_role"`
-	DeviceID    string  `json:"device_id"`
-	DeviceType  string  `json:"device_type"`
-	DeviceName  string  `json:"device_name"`
-	DeviceModel string  `json:"device_model"`
-	DevicePrice float64 `json:"device_price"`
-	DeviceNum   int     `json:"device_num"`
-	BrandName   string  `json:"brand_name"`
-	DeviceNote  string  `json:"device_note"`
+	ID              int     `json:"id"`
+	SlnNo           string  `json:"sln_no"`
+	UserID          int     `json:"user_id"`
+	SlnRole         string  `json:"sln_role"`
+	DeviceID        string  `json:"device_id"`
+	DeviceType      string  `json:"device_type"`
+	DeviceComponent string  `json:"device_component"`
+	DeviceName      string  `json:"device_name"`
+	DeviceModel     string  `json:"device_model"`
+	DevicePrice     float64 `json:"device_price"`
+	DeviceNum       int     `json:"device_num"`
+	BrandName       string  `json:"brand_name"`
+	DeviceNote      string  `json:"device_note"`
+	DeviceOrigin    string  `json:"device_origin"`
 }
 
 // sln_supplier_info 表

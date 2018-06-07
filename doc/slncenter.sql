@@ -67,18 +67,20 @@ CREATE TABLE `sln_user_info` (
 -- ----------------------------
 DROP TABLE IF EXISTS `welding_device`;
 CREATE TABLE `welding_device` (
-  `id`           int(11)     NOT NULL AUTO_INCREMENT,
-  `sln_no`       varchar(20) NOT NULL,
-  `user_id`      int(11)     NOT NULL,
-  `sln_role`     varchar(2)  NOT NULL DEFAULT 'C',
-  `device_id`    varchar(20)          DEFAULT NULL,
-  `device_type`  varchar(20)          DEFAULT NULL,
-  `device_name`  varchar(50)          DEFAULT NULL,
-  `device_model` varchar(255)         DEFAULT NULL,
-  `device_price` decimal(10, 2)       DEFAULT NULL,
-  `device_num`   int(11)              DEFAULT NULL,
-  `brand_name`   varchar(255)         DEFAULT NULL,
-  `device_note`  varchar(255)         DEFAULT NULL,
+  `id`               int(11)     NOT NULL AUTO_INCREMENT,
+  `sln_no`           varchar(20) NOT NULL,
+  `user_id`          int(11)     NOT NULL,
+  `sln_role`         varchar(2)  NOT NULL DEFAULT 'C',
+  `device_id`        varchar(20)          DEFAULT NULL,
+  `device_type`      varchar(30)          DEFAULT NULL,
+  `device_component` varchar(30)          DEFAULT NULL,
+  `device_name`      varchar(50)          DEFAULT NULL,
+  `device_model`     varchar(255)         DEFAULT NULL,
+  `device_price`     decimal(10, 2)       DEFAULT NULL,
+  `device_num`       int(11)              DEFAULT NULL,
+  `brand_name`       varchar(255)         DEFAULT NULL,
+  `device_note`      varchar(255)         DEFAULT NULL,
+  `device_origin`    varchar(50)          DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sln_no` (`sln_no`)
 )
