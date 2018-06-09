@@ -24,7 +24,15 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			db.Where("customer_id = ?", uid).Find(&dbData)
 		}
 
-	case 2, 3, 4: // supplier
+	case 2: // supplier
+		if isType != "" && isType != "all" {
+			db.Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
+		} else {
+			// 只能查看已发布和已报价的
+			db.Where("sln_status in (?)", []string{"P", "M"}).Find(&dbData)
+		}
+
+	case 3, 4: // admin
 		if isType != "" && isType != "all" {
 			db.Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
 		} else {
