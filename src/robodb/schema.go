@@ -2,7 +2,7 @@ package robodb
 
 // sln_basic_info 表
 type SlnBasicInfo struct {
-	ID            int     `json:"id"`
+	ID            int     `json:"-"`
 	SlnNo         string  `json:"sln_no"`
 	SlnName       string  `json:"sln_name"`
 	SlnType       string  `json:"sln_type"`
@@ -17,7 +17,7 @@ type SlnBasicInfo struct {
 
 // sln_user_info 表
 type SlnUserInfo struct {
-	ID          int    `json:"id"`
+	ID          int    `json:"-"`
 	SlnNo       string `json:"sln_no"`
 	PayRatio    int    `json:"pay_ratio"`
 	WeldingName string `json:"welding_name"`
@@ -26,7 +26,7 @@ type SlnUserInfo struct {
 
 // welding_info 表
 type WeldingInfo struct {
-	ID                int     `json:"id"`
+	ID                int     `json:"-"`
 	SlnNo             string  `json:"sln_no"`
 	WeldingBusiness   string  `json:"welding_business"`
 	WeldingScenario   string  `json:"welding_scenario"`
@@ -43,7 +43,7 @@ type WeldingInfo struct {
 
 // welding_file 表
 type WeldingFile struct {
-	ID       int    `json:"id"`
+	ID       int    `json:"-"`
 	SlnNo    string `json:"sln_no"`
 	UserID   int    `json:"user_id"`
 	SlnRole  string `json:"sln_role"`
@@ -54,7 +54,7 @@ type WeldingFile struct {
 
 // welding_device 表
 type WeldingDevice struct {
-	ID              int     `json:"id"`
+	ID              int     `json:"-"`
 	SlnNo           string  `json:"sln_no"`
 	UserID          int     `json:"user_id"`
 	SlnRole         string  `json:"sln_role"`
@@ -72,7 +72,7 @@ type WeldingDevice struct {
 
 // sln_supplier_info 表
 type SlnSupplierInfo struct {
-	ID           int     `json:"id"`
+	ID           int     `json:"-"`
 	SlnNo        string  `json:"sln_no"`
 	UserID       int     `json:"user_id"`
 	TotalPrice   float64 `json:"total_price"`
@@ -86,7 +86,7 @@ type SlnSupplierInfo struct {
 
 // welding_support 表
 type WeldingSupport struct {
-	ID     int     `json:"id"`
+	ID     int     `json:"-"`
 	SlnNo  string  `json:"sln_no"`
 	UserID int     `json:"user_id"`
 	Name   string  `json:"name"`
@@ -96,7 +96,7 @@ type WeldingSupport struct {
 
 // welding_tech_param 表
 type WeldingTechParam struct {
-	ID       int    `json:"id"`
+	ID       int    `json:"-"`
 	SlnNo    string `json:"sln_no"`
 	UserID   int    `json:"user_id"`
 	Name     string `json:"name"`
