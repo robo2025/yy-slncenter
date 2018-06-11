@@ -29,11 +29,10 @@ func HttpRequest(method string, url string, header map[string]string, body io.Re
 
 	// 进行网络请求
 	res, err := client.Do(req)
-	defer res.Body.Close()
-
 	if err != nil {
 		return nil, err
 	}
+	defer res.Body.Close()
 
 	// 解析返回数据
 	if res.StatusCode != http.StatusOK {
