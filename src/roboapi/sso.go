@@ -59,7 +59,7 @@ func parseTokenInfo(auth string) (*SSOUser, error) {
 	if DeployMode == "production" {
 		ssoURL = "https://login.robo2025.com/server/verify"
 	} else {
-		ssoURL = "https://test-login.robo2025.com/server/verify"
+		ssoURL = "https://testlogin.robo2025.com/server/verify"
 	}
 
 	// 请求 SSO URL
