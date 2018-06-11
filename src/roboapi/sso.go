@@ -2,7 +2,6 @@ package roboapi
 
 import (
 	"github.com/gin-gonic/gin"
-	"os"
 	"roboweb"
 	"encoding/json"
 )
@@ -56,9 +55,11 @@ func parseTokenInfo(auth string) (*SSOUser, error) {
 	jsonData := make([]byte, 0)
 
 	// 获取 SSO URL
-	ssoURL := os.Getenv("SSO_URL")
-	if ssoURL == "" {
+	var ssoURL string
+	if DeployMode == "production" {
 		ssoURL = "https://login.robo2025.com/server/verify"
+	} else {
+		ssoURL = "https://test-login.robo2025.com/server/verify"
 	}
 
 	// 请求 SSO URL

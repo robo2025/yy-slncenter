@@ -5,16 +5,24 @@ import (
 	"github.com/gin-contrib/cors"
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"os"
 )
 
 type GinEnv struct {
 	db *gorm.DB
 }
 
+var DeployMode string
+
 func StartWebService(bindAddr string, db *gorm.DB) {
 
+	DeployMode = os.Getenv("ROBO_DEPLOY_MODE")
 	// Set gin context
-	gin.SetMode(gin.ReleaseMode)
+	if DeployMode == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
 	router := gin.Default()
 	env := &GinEnv{db: db}
 
