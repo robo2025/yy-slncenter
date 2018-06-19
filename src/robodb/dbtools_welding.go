@@ -21,8 +21,8 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 	return db, nil
 }
 
-// 准备写入或者更新用的方案数据
-func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
+// 准备写入或者更新用的方案数据 prepareSolutionData
+func prepareWeldingData(params *WeldingParams, uid int) *WeldingParams {
 	// 准备数据
 	slnNo := strings.TrimSpace(params.SlnNo)
 
@@ -50,37 +50,37 @@ func prepareSolutionData(params *SolutionParams, uid int) *SolutionParams {
 		weldingInfo.SlnNo = slnNo
 	}
 
-	// welding_device 表
-	weldingDevice := make([]WeldingDevice, 0)
-	if len(params.WeldingDevice) != 0 {
-		for _, el := range params.WeldingDevice {
+	// sln_device 表
+	slnDevice := make([]SlnDevice, 0)
+	if len(params.SlnDevice) != 0 {
+		for _, el := range params.SlnDevice {
 			el.SlnNo = slnNo
 			el.UserID = uid
 			el.SlnRole = "C"
-			weldingDevice = append(weldingDevice, el)
+			slnDevice = append(slnDevice, el)
 		}
 	}
 
-	// welding_file 表
-	weldingFile := make([]WeldingFile, 0)
-	if len(params.WeldingFile) != 0 {
-		for _, el := range params.WeldingFile {
+	// sln_file 表
+	slnFile := make([]SlnFile, 0)
+	if len(params.SlnFile) != 0 {
+		for _, el := range params.SlnFile {
 			el.SlnNo = slnNo
 			el.UserID = uid
 			el.SlnRole = "C"
-			weldingFile = append(weldingFile, el)
+			slnFile = append(slnFile, el)
 		}
 	}
 
 	// 返回组合数据
-	resp := &SolutionParams{
-		SlnNo:         slnNo,
-		UID:           uid,
-		SlnBasicInfo:  slnBasicInfo,
-		SlnUserInfo:   slnUserInfo,
-		WeldingInfo:   weldingInfo,
-		WeldingDevice: weldingDevice,
-		WeldingFile:   weldingFile,
+	resp := &WeldingParams{
+		SlnNo:        slnNo,
+		UID:          uid,
+		SlnBasicInfo: slnBasicInfo,
+		SlnUserInfo:  slnUserInfo,
+		WeldingInfo:  weldingInfo,
+		SlnDevice:    slnDevice,
+		SlnFile:      slnFile,
 	}
 	return resp
 }
@@ -102,23 +102,23 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	}
 
 	// welding_device 表
-	weldingDevice := make([]WeldingDevice, 0)
-	if len(params.WeldingDevice) != 0 {
-		for _, el := range params.WeldingDevice {
+	slnDevice := make([]SlnDevice, 0)
+	if len(params.SlnDevice) != 0 {
+		for _, el := range params.SlnDevice {
 			el.SlnNo = slnNo
 			el.UserID = uid
 			el.SlnRole = "S"
-			weldingDevice = append(weldingDevice, el)
+			slnDevice = append(slnDevice, el)
 		}
 	}
 
-	// welding_support 表
-	weldingSupport := make([]WeldingSupport, 0)
-	if len(params.WeldingSupport) != 0 {
-		for _, el := range params.WeldingSupport {
+	// sln_support 表
+	slnSupport := make([]SlnSupport, 0)
+	if len(params.SlnSupport) != 0 {
+		for _, el := range params.SlnSupport {
 			el.SlnNo = slnNo
 			el.UserID = uid
-			weldingSupport = append(weldingSupport, el)
+			slnSupport = append(slnSupport, el)
 		}
 	}
 
@@ -132,14 +132,14 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 		}
 	}
 
-	// welding_file 表
-	weldingFile := make([]WeldingFile, 0)
-	if len(params.WeldingFile) != 0 {
-		for _, el := range params.WeldingFile {
+	// sln_file 表
+	slnFile := make([]SlnFile, 0)
+	if len(params.SlnFile) != 0 {
+		for _, el := range params.SlnFile {
 			el.SlnNo = slnNo
 			el.UserID = uid
 			el.SlnRole = "C"
-			weldingFile = append(weldingFile, el)
+			slnFile = append(slnFile, el)
 		}
 	}
 
@@ -148,16 +148,16 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 		SlnNo:            slnNo,
 		UID:              uid,
 		SlnSupplierInfo:  slnSupplierInfo,
-		WeldingDevice:    weldingDevice,
-		WeldingSupport:   weldingSupport,
+		SlnDevice:        slnDevice,
+		SlnSupport:       slnSupport,
 		WeldingTechParam: weldingTechParam,
-		WeldingFile:      weldingFile,
+		SlnFile:          slnFile,
 	}
 	return resp
 }
 
-// 写入方案数据
-func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
+// 写入方案数据 writeSolutionData
+func writeWeldingData(db *gorm.DB, params *WeldingParams) error {
 	var err error
 
 	// 写入数据库
@@ -194,9 +194,9 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 		return err
 	}
 
-	// 写入 welding_device 表
-	if len(params.WeldingDevice) != 0 {
-		for _, el := range params.WeldingDevice {
+	// 写入 Sln_device 表
+	if len(params.SlnDevice) != 0 {
+		for _, el := range params.SlnDevice {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -205,9 +205,9 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 		}
 	}
 
-	// 写入 welding_file 表
-	if len(params.WeldingFile) != 0 {
-		for _, el := range params.WeldingFile {
+	// 写入 sln_file 表
+	if len(params.SlnFile) != 0 {
+		for _, el := range params.SlnFile {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -219,12 +219,12 @@ func writeSolutionData(db *gorm.DB, params *SolutionParams) error {
 	return tx.Commit().Error
 }
 
-// 更新方案数据
-func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
+// 更新方案数据 updateSolutionData
+func updateWeldingData(db *gorm.DB, params *WeldingParams) error {
 	var err error
 	slnBasicInfo := &SlnBasicInfo{}
 	slnUserInfo := &SlnUserInfo{}
-	weldingFile := []WeldingFile{}
+	slnFile := []SlnFile{}
 
 	// 查找数据库相应数据
 	slnNo := params.SlnNo
@@ -234,7 +234,7 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 		return errors.New("找不到相应方案")
 	}
 	db.Where("sln_no = ?", slnNo).First(slnUserInfo)
-	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(&weldingFile)
+	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(&slnFile)
 
 	// 写入数据库
 	tx := db.Begin()
@@ -269,18 +269,18 @@ func updateSolutionData(db *gorm.DB, params *SolutionParams) error {
 		}
 	}
 
-	// 更新 welding_file 表
-	if len(params.WeldingFile) != 0 {
+	// 更新 sln_file 表
+	if len(params.SlnFile) != 0 {
 
 		// 删除所有的旧数据
-		err = db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Delete(WeldingFile{}).Error
+		err = db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Delete(SlnFile{}).Error
 		if err != nil {
 			tx.Rollback()
 			return err
 		}
 
 		// 插入所有的新数据
-		for _, el := range params.WeldingFile {
+		for _, el := range params.SlnFile {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -337,9 +337,9 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 		return err
 	}
 
-	// 写入 welding_device 表
-	if len(params.WeldingDevice) != 0 {
-		for _, el := range params.WeldingDevice {
+	// 写入 sln_device 表
+	if len(params.SlnDevice) != 0 {
+		for _, el := range params.SlnDevice {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -349,8 +349,8 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	}
 
 	// 写入 welding_support 表
-	if len(params.WeldingSupport) != 0 {
-		for _, el := range params.WeldingSupport {
+	if len(params.SlnSupport) != 0 {
+		for _, el := range params.SlnSupport {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -371,8 +371,8 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	}
 
 	// 写入 welding_file 表
-	if len(params.WeldingFile) != 0 {
-		for _, el := range params.WeldingFile {
+	if len(params.SlnFile) != 0 {
+		for _, el := range params.SlnFile {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -385,12 +385,12 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 }
 
 // 查询用户方案细节
-func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*SolutionParams, error) {
+func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*WeldingParams, error) {
 	slnBasicInfo := &SlnBasicInfo{}
 	slnUserInfo := &SlnUserInfo{}
 	WeldingInfo := &WeldingInfo{}
-	weldingDevice := []WeldingDevice{}
-	weldingFile := []WeldingFile{}
+	slnDevice := []SlnDevice{}
+	slnFile := []SlnFile{}
 
 	uid := c.MustGet("uid").(int)
 	role := c.MustGet("role").(int)
@@ -408,16 +408,16 @@ func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*SolutionParam
 	customerID := slnBasicInfo.CustomerID
 	db.Where("sln_no = ?", slnID).First(slnUserInfo)
 	db.Where("sln_no = ?", slnID).First(WeldingInfo)
-	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&weldingDevice)
-	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&weldingFile)
+	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnDevice)
+	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnFile)
 
-	resp := &SolutionParams{
-		SlnNo:         slnID,
-		SlnBasicInfo:  slnBasicInfo,
-		SlnUserInfo:   slnUserInfo,
-		WeldingInfo:   WeldingInfo,
-		WeldingDevice: weldingDevice,
-		WeldingFile:   weldingFile,
+	resp := &WeldingParams{
+		SlnNo:        slnID,
+		SlnBasicInfo: slnBasicInfo,
+		SlnUserInfo:  slnUserInfo,
+		WeldingInfo:  WeldingInfo,
+		SlnDevice:    slnDevice,
+		SlnFile:      slnFile,
 	}
 
 	return resp, nil
@@ -426,10 +426,10 @@ func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*SolutionParam
 // 查询供应商报价细节
 func readOfferData(db *gorm.DB, slnID string, uid int) (*OfferParams, error) {
 	slnSupplierInfo := &SlnSupplierInfo{}
-	weldingDevice := []WeldingDevice{}
+	slnDevice := []SlnDevice{}
 	weldingTechParams := []WeldingTechParam{}
-	weldingSupport := []WeldingSupport{}
-	weldingFile := []WeldingFile{}
+	slnSupport := []SlnSupport{}
+	slnFile := []SlnFile{}
 
 	db.Where("sln_no = ? AND user_id = ?", slnID, uid).First(slnSupplierInfo)
 	if slnSupplierInfo.ID == 0 {
@@ -437,17 +437,17 @@ func readOfferData(db *gorm.DB, slnID string, uid int) (*OfferParams, error) {
 	}
 
 	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingTechParams)
-	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingSupport)
-	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingDevice)
-	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&weldingFile)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&slnSupport)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&slnDevice)
+	db.Where("sln_no = ? AND user_id = ?", slnID, uid).Find(&slnFile)
 
 	resp := &OfferParams{
 		SlnNo:            slnID,
 		SlnSupplierInfo:  slnSupplierInfo,
-		WeldingDevice:    weldingDevice,
+		SlnDevice:        slnDevice,
 		WeldingTechParam: weldingTechParams,
-		WeldingSupport:   weldingSupport,
-		WeldingFile:      weldingFile,
+		SlnSupport:       slnSupport,
+		SlnFile:          slnFile,
 	}
 
 	return resp, nil

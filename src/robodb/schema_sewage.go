@@ -5,9 +5,8 @@ package robodb
 type SewageInfo struct {
 	ID                 int     `json:"-"`
 	SlnNo              string  `json:"sln_no"`
-	SlnModel           string  `json:"sln_model"`
 	SewageBusiness     string  `json:"sewage_business"`
-	SlnScenario        string  `json:"sln_scenario"`
+	SewageScenario     string  `json:"sewage_scenario"`
 	TechMethod         string  `json:"tech_method"`
 	GeneralNorm        string  `json:"general_norm"`
 	OtherNorm          string  `json:"other_norm"`
@@ -23,9 +22,8 @@ type SewageInfo struct {
 	OperatingSize	   float64	`json:"operating_size"`
 }
 /*
-    "SlnModel":"污水44处理",
     "SewageBusiness": "工业",
-    "SlnScenario": "场景",
+    "SewageScenario": "场景",
     "TechMethod": "为什么没汉字",
     "GeneralNorm": "为什么没汉字",
     "OtherNorm": "为什么没汉字",

@@ -37,37 +37,37 @@ func prepareSewageData(params *SewageParams, uid int) *SewageParams {
 		sewageInfo.SlnNo = slnNo
 	}
 
-	// welding_device 表
-	weldingDevice := make([]WeldingDevice, 0)
-	if len(params.WeldingDevice) != 0 {
-		for _, el := range params.WeldingDevice {
+	// SlnDevice 表
+	slnDevice := make([]SlnDevice, 0)
+	if len(params.SlnDevice) != 0 {
+		for _, el := range params.SlnDevice {
 			el.SlnNo = slnNo
 			el.UserID = uid
 			el.SlnRole = "C"
-			weldingDevice = append(weldingDevice, el)
+			slnDevice = append(slnDevice, el)
 		}
 	}
 
-	// welding_file 表
-	weldingFile := make([]WeldingFile, 0)
-	if len(params.WeldingFile) != 0 {
-		for _, el := range params.WeldingFile {
+	// sln_file 表
+	slnFile := make([]SlnFile, 0)
+	if len(params.SlnFile) != 0 {
+		for _, el := range params.SlnFile {
 			el.SlnNo = slnNo
 			el.UserID = uid
 			el.SlnRole = "C"
-			weldingFile = append(weldingFile, el)
+			slnFile = append(slnFile, el)
 		}
 	}
 
 	// 返回组合数据
 	resp := &SewageParams{
-		SlnNo:         slnNo,
-		UID:           uid,
-		SlnBasicInfo:  slnBasicInfo,
-		SlnUserInfo:   slnUserInfo,
-		SewageInfo:    sewageInfo,
-		WeldingDevice: weldingDevice,
-		WeldingFile:   weldingFile,
+		SlnNo:        slnNo,
+		UID:          uid,
+		SlnBasicInfo: slnBasicInfo,
+		SlnUserInfo:  slnUserInfo,
+		SewageInfo:   sewageInfo,
+		SlnDevice:    slnDevice,
+		SlnFile:      slnFile,
 	}
 	return resp
 }
@@ -103,16 +103,16 @@ func writeSewageData(db *gorm.DB, params *SewageParams) error {
 		return err
 	}
 
-	// 写入 welding_info 表
+	// 写入 sewage_info 表
 	err = tx.Create(params.SewageInfo).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	// 写入 welding_device 表
-	if len(params.WeldingDevice) != 0 {
-		for _, el := range params.WeldingDevice {
+	// 写入 sln_device 表
+	if len(params.SlnDevice) != 0 {
+		for _, el := range params.SlnDevice {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -121,9 +121,9 @@ func writeSewageData(db *gorm.DB, params *SewageParams) error {
 		}
 	}
 
-	// 写入 welding_file 表
-	if len(params.WeldingFile) != 0 {
-		for _, el := range params.WeldingFile {
+	// 写入 sln_file 表
+	if len(params.SlnFile) != 0 {
+		for _, el := range params.SlnFile {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()
@@ -140,9 +140,8 @@ func readSewageData(db *gorm.DB, slnID string, c *gin.Context) (*SewageParams, e
 	slnBasicInfo := &SlnBasicInfo{}
 	slnUserInfo := &SlnUserInfo{}
 	SewageInfo := &SewageInfo{}
-	//WeldingInfo := &WeldingInfo{}
-	weldingDevice := []WeldingDevice{}
-	weldingFile := []WeldingFile{}
+	slnDevice := []SlnDevice{}
+	slnFile := []SlnFile{}
 
 	uid := c.MustGet("uid").(int)
 	role := c.MustGet("role").(int)
@@ -157,78 +156,28 @@ func readSewageData(db *gorm.DB, slnID string, c *gin.Context) (*SewageParams, e
 		return nil, errors.New("找不到相应方案")
 	}
 	customerID := slnBasicInfo.CustomerID
-	//switch slnBasicInfo.SlnType {
-	//case "焊接":
-	//	db.Where("sln_no = ?", slnID).First(WeldingInfo)
-	//case "污水处理":
-	//	db.Where("sln_no = ?", slnID).First(SewageInfo)
-	//}
-
 	db.Where("sln_no = ?", slnID).First(slnUserInfo)
 	db.Where("sln_no = ?", slnID).First(SewageInfo)
-	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&weldingDevice)
-	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&weldingFile)
+	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnDevice)
+	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnFile)
 
-	//switch slnBasicInfo.SlnType {
-	//case "焊接":
-	//	resp := &SolutionParams{
-	//		SlnNo:         slnID,
-	//		SlnBasicInfo:  slnBasicInfo,
-	//		SlnUserInfo:   slnUserInfo,
-	//		WeldingInfo:   WeldingInfo,
-	//		WeldingDevice: weldingDevice,
-	//		WeldingFile:   weldingFile,
-	//	}
-	//	return resp, nil
-	//case "污水处理":
-	//	resp := &SewageParams{
-	//		SlnNo:         slnID,
-	//		SlnBasicInfo:  slnBasicInfo,
-	//		SlnUserInfo:   slnUserInfo,
-	//		SewageInfo:    SewageInfo,
-	//		WeldingDevice: weldingDevice,
-	//		WeldingFile:   weldingFile,
-	//	}
-	//	return resp, nil
-	//}
-	//if slnBasicInfo.SlnType == "焊接" {
-	//	resp := &SolutionParams{
-	//		SlnNo:         slnID,
-	//		SlnBasicInfo:  slnBasicInfo,
-	//		SlnUserInfo:   slnUserInfo,
-	//		WeldingInfo:   WeldingInfo,
-	//		WeldingDevice: weldingDevice,
-	//		WeldingFile:   weldingFile,
-	//	}
-	//	return resp, nil
-	//} else if slnBasicInfo.SlnType == "污水处理" {
-	//	resp := &SewageParams{
-	//		SlnNo:         slnID,
-	//		SlnBasicInfo:  slnBasicInfo,
-	//		SlnUserInfo:   slnUserInfo,
-	//		SewageInfo:    SewageInfo,
-	//		WeldingDevice: weldingDevice,
-	//		WeldingFile:   weldingFile,
-	//	}
-	//	return resp, nil
-	//}
 	resp := &SewageParams{
-		SlnNo:         slnID,
-		SlnBasicInfo:  slnBasicInfo,
-		SlnUserInfo:   slnUserInfo,
+		SlnNo:        slnID,
+		SlnBasicInfo: slnBasicInfo,
+		SlnUserInfo:  slnUserInfo,
 		SewageInfo:   SewageInfo,
-		WeldingDevice: weldingDevice,
-		WeldingFile:   weldingFile,
+		SlnDevice:    slnDevice,
+		SlnFile:      slnFile,
 	}
-	return resp,nil
+	return resp, nil
 }
 
-// 更新污水方案数据   和焊接一模一样 后期优化必看
+// 更新污水方案数据
 func updateSewageData(db *gorm.DB, params *SewageParams) error {
 	var err error
 	slnBasicInfo := &SlnBasicInfo{}
 	slnUserInfo := &SlnUserInfo{}
-	weldingFile := []WeldingFile{}
+	slnFile := []SlnFile{}
 
 	// 查找数据库相应数据
 	slnNo := params.SlnNo
@@ -238,7 +187,7 @@ func updateSewageData(db *gorm.DB, params *SewageParams) error {
 		return errors.New("找不到相应方案")
 	}
 	db.Where("sln_no = ?", slnNo).First(slnUserInfo)
-	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(&weldingFile)
+	db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Find(&slnFile)
 
 	// 写入数据库
 	tx := db.Begin()
@@ -273,18 +222,18 @@ func updateSewageData(db *gorm.DB, params *SewageParams) error {
 		}
 	}
 
-	// 更新 welding_file 表
-	if len(params.WeldingFile) != 0 {
+	// 更新 sln_file 表
+	if len(params.SlnFile) != 0 {
 
 		// 删除所有的旧数据
-		err = db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Delete(WeldingFile{}).Error
+		err = db.Where("sln_no = ? AND sln_role = ?", slnNo, "C").Delete(SlnFile{}).Error
 		if err != nil {
 			tx.Rollback()
 			return err
 		}
 
 		// 插入所有的新数据
-		for _, el := range params.WeldingFile {
+		for _, el := range params.SlnFile {
 			err = tx.Create(&el).Error
 			if err != nil {
 				tx.Rollback()

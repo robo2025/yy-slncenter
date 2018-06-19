@@ -41,8 +41,8 @@ type WeldingInfo struct {
 	MaxRadius         float64 `json:"max_radius"`
 }
 
-// welding_file 表
-type WeldingFile struct {
+// welding_file 表 Sln File
+type SlnFile struct {
 	ID       int    `json:"-"`
 	SlnNo    string `json:"sln_no"`
 	UserID   int    `json:"user_id"`
@@ -52,8 +52,8 @@ type WeldingFile struct {
 	FileURL  string `json:"file_url"`
 }
 
-// welding_device 表
-type WeldingDevice struct {
+// welding_device 表 sln_device表
+type SlnDevice struct {
 	ID              int     `json:"-"`
 	SlnNo           string  `json:"sln_no"`
 	UserID          int     `json:"user_id"`
@@ -84,8 +84,8 @@ type SlnSupplierInfo struct {
 	SlnNote      string  `json:"sln_note"`
 }
 
-// welding_support 表
-type WeldingSupport struct {
+// welding_support 表  sln_support
+type SlnSupport struct {
 	ID     int     `json:"-"`
 	SlnNo  string  `json:"sln_no"`
 	UserID int     `json:"user_id"`

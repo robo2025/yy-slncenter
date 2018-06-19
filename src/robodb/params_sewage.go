@@ -8,8 +8,8 @@ type SewageParams struct {
 	SewageInfo    *SewageInfo     `json:"sewage_info"`
 	SlnBasicInfo  *SlnBasicInfo   `json:"sln_basic_info"`
 	SlnUserInfo   *SlnUserInfo    `json:"sln_user_info"`
-	WeldingDevice []WeldingDevice `json:"welding_device"`
-	WeldingFile   []WeldingFile   `json:"welding_file"`
+	SlnDevice 	  []SlnDevice 	  `json:"sln_device"`
+	SlnFile   	  []SlnFile   	  `json:"sln_file"`
 }
 
 // 污水方案细节页面

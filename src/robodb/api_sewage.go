@@ -7,9 +7,6 @@ import (
 	"reflect"
 )
 
-type empty1 interface {
-}
-
 //创建新污水方案
 func CreateSewage(db *gorm.DB, params *SewageParams, c *gin.Context) error {
 	uid := c.MustGet("uid").(int)
@@ -18,7 +15,6 @@ func CreateSewage(db *gorm.DB, params *SewageParams, c *gin.Context) error {
 }
 
 // 获取污水方案细节
-//noinspection GoBinaryAndUnaryExpressionTypesCompatibility
 func FetchSewageDetail(db *gorm.DB, c *gin.Context) (*SewageDetailParams, error) {
 	slnID := c.Param("id")
 
@@ -53,21 +49,3 @@ func UpdateSewage(db *gorm.DB, params *SewageParams, c *gin.Context) error {
 	return updateSewageData(db, dbParams)
 }
 
-//func jugeSlnType(db *gorm.DB, id int) (empty1,empty1){
-//	slnBasicInfo := &SlnBasicInfo{}
-//	db.Where("sln_no = ?", id).First(slnBasicInfo)
-//
-//	var (
-//		customer interface{}
-//		resp interface{}
-//	)
-//	if slnBasicInfo.SlnType == "焊接" {
-//		customer = &SolutionParams{}
-//		resp = &SolutionDetailParams{}
-//
-//	} else if slnBasicInfo.SlnType == "污水处理" {
-//		customer = &SewageParams{}
-//		resp = &SewageDetailParams{}
-//	}
-//	return customer,resp
-//}

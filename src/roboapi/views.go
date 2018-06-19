@@ -2,8 +2,8 @@ package roboapi
 
 import (
 	"github.com/gin-gonic/gin"
-	"robodb"
 	log "github.com/sirupsen/logrus"
+	"robodb"
 )
 
 // url: /
@@ -32,13 +32,13 @@ func (e *GinEnv) viewSolutionList(c *gin.Context) {
 }
 
 // post url: /sln
-func (e *GinEnv) viewCreateSolution(c *gin.Context) {
+func (e *GinEnv) viewCreateWelding(c *gin.Context) {
 	verifyRole := "customer"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
 	}
 
-	solutionParams := &robodb.SolutionParams{}
+	solutionParams := &robodb.WeldingParams{}
 	err := c.BindJSON(solutionParams)
 	if err != nil {
 		apiResponse(c, RespFailed, nil, err.Error())
@@ -55,13 +55,13 @@ func (e *GinEnv) viewCreateSolution(c *gin.Context) {
 }
 
 // url: /sln/:id
-func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
+func (e *GinEnv) viewWeldingDetail(c *gin.Context) {
 	verifyRole := c.Query("role")
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
 	}
 
-	slnDetail, err := robodb.FetchSolutionDetail(e.db, c)
+	slnDetail, err := robodb.FetchWeldingDetail(e.db, c)
 	if err != nil {
 		log.Error("获取方案细节错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
@@ -71,13 +71,13 @@ func (e *GinEnv) viewSolutionDetail(c *gin.Context) {
 }
 
 // put url: /sln/:id
-func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
+func (e *GinEnv) viewUpdateWelding(c *gin.Context) {
 	verifyRole := "customer"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
 	}
 
-	solutionParams := &robodb.SolutionParams{}
+	solutionParams := &robodb.WeldingParams{}
 	solutionParams.SlnNo = c.Param("id")
 
 	err := c.BindJSON(solutionParams)
@@ -86,7 +86,7 @@ func (e *GinEnv) viewUpdateSolution(c *gin.Context) {
 		return
 	}
 
-	err = robodb.UpdateSolution(e.db, solutionParams, c)
+	err = robodb.UpdateWelding(e.db, solutionParams, c)
 	if err != nil {
 		log.Error("更新方案列表错误!")
 		apiResponse(c, RespFailed, nil, err.Error())
@@ -121,7 +121,7 @@ func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 	}
 }
 
-// todo add sewage viewCreateSewage viewSewageList
+// to add sewage viewCreateSewage
 
 // post url: /sewage
 func (e *GinEnv) viewCreateSewage(c *gin.Context) {

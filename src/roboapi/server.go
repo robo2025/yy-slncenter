@@ -44,14 +44,15 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 
 func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/", env.viewIndex)
-	rg.GET("/sln", env.viewSolutionList)
-	rg.POST("/sln", env.viewCreateSolution)
-	rg.GET("/sln/:id", env.viewSolutionDetail)
-	rg.PUT("/sln/:id", env.viewUpdateSolution)
+	rg.GET("/sln", env.viewSolutionList)   //所有方案列表
+
+	rg.POST("/welding", env.viewCreateWelding)   //welding 是焊接方案
+	rg.GET("/welding/:id", env.viewWeldingDetail)
+	rg.PUT("/welding/:id", env.viewUpdateWelding)
+
 	rg.POST("/offer/:id", env.viewOfferSolution)
 
-	//sln是焊接方案,sewage是污水
-	rg.POST("/sewage", env.viewCreateSewage)
+	rg.POST("/sewage", env.viewCreateSewage)    // sewage 是污水
 	rg.GET("/sewage/:id", env.viewSewageDetail)
 	rg.PUT("/sewage/:id", env.viewUpdateSewage)
 

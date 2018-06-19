@@ -9,7 +9,7 @@ CREATE TABLE `sewage_info` (
   `id`                  int(11)       NOT NULL AUTO_INCREMENT,
   `sln_no`              varchar(20)   NOT NULL,
   `sewage_business`     varchar(20)   DEFAULT NULL,
-  `sln_scenario`        varchar(20)   DEFAULT NULL,
+  `sewage_scenario`     varchar(20)   DEFAULT NULL,
   `tech_method`         varchar(20)   DEFAULT NULL,
   `general_norm`        varchar(20)   DEFAULT NULL,
   `other_norm`          varchar(20)   DEFAULT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `sewage_info` (
   `doser`               int(11)       DEFAULT NULL,
   `aux_equipment_nums`  int(11)       DEFAULT NULL,
   `total_equipment_nums` int(11)      DEFAULT NULL,
-  `operating_size`      decimal(3,1)  DEFAULT NULL,
+  `operating_size`      decimal(8,1)  DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sln_no` (`sln_no`)
 )
@@ -92,8 +92,8 @@ CREATE TABLE `sln_user_info` (
 -- ----------------------------
 -- Table structure for welding_device
 -- ----------------------------
-DROP TABLE IF EXISTS `welding_device`;
-CREATE TABLE `welding_device` (
+DROP TABLE IF EXISTS `sln_device`;
+CREATE TABLE `sln_device` (
   `id`               int(11)     NOT NULL AUTO_INCREMENT,
   `sln_no`           varchar(20) NOT NULL,
   `user_id`          int(11)     NOT NULL,
@@ -117,8 +117,8 @@ CREATE TABLE `welding_device` (
 -- ----------------------------
 -- Table structure for welding_file
 -- ----------------------------
-DROP TABLE IF EXISTS `welding_file`;
-CREATE TABLE `welding_file` (
+DROP TABLE IF EXISTS `sln_file`;
+CREATE TABLE `sln_file` (
   `id`        int(11)     NOT NULL AUTO_INCREMENT,
   `sln_no`    varchar(20) NOT NULL,
   `user_id`   int(11)     NOT NULL,
@@ -159,8 +159,8 @@ CREATE TABLE `welding_info` (
 -- ----------------------------
 -- Table structure for welding_support
 -- ----------------------------
-DROP TABLE IF EXISTS `welding_support`;
-CREATE TABLE `welding_support` (
+DROP TABLE IF EXISTS `sln_support`;
+CREATE TABLE `sln_support` (
   `id`      int(11)     NOT NULL AUTO_INCREMENT,
   `sln_no`  varchar(20) NOT NULL,
   `user_id` int(11)     NOT NULL,

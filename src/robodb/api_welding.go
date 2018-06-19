@@ -40,13 +40,13 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 }
 
 // 获取方案细节
-func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, error) {
+func FetchWeldingDetail(db *gorm.DB, c *gin.Context) (*WeldingDetailParams, error) {
 	slnID := c.Param("id")
 
 	var err error
-	customer := &SolutionParams{}
+	customer := &WeldingParams{}
 	supplier := &OfferParams{}
-	resp := &SolutionDetailParams{}
+	resp := &WeldingDetailParams{}
 
 	// 读取用户询价数据
 	customer, err = readSolutionData(db, slnID, c)
@@ -67,18 +67,18 @@ func FetchSolutionDetail(db *gorm.DB, c *gin.Context) (*SolutionDetailParams, er
 	return resp, nil
 }
 
-// 创建新方案
-func CreateSolution(db *gorm.DB, params *SolutionParams, c *gin.Context) error {
+// 创建新焊接方案
+func CreateSolution(db *gorm.DB, params *WeldingParams, c *gin.Context) error {
 	uid := c.MustGet("uid").(int)
-	dbParams := prepareSolutionData(params, uid)
-	return writeSolutionData(db, dbParams)
+	dbParams := prepareWeldingData(params, uid)
+	return writeWeldingData(db, dbParams)
 }
 
-// 更新现有方案
-func UpdateSolution(db *gorm.DB, params *SolutionParams, c *gin.Context) error {
+// 更新现有焊接方案
+func UpdateWelding(db *gorm.DB, params *WeldingParams, c *gin.Context) error {
 	uid := c.MustGet("uid").(int)
-	dbParams := prepareSolutionData(params, uid)
-	return updateSolutionData(db, dbParams)
+	dbParams := prepareWeldingData(params, uid)
+	return updateWeldingData(db, dbParams)
 }
 
 // 方案报价
