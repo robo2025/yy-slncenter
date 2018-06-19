@@ -120,3 +120,68 @@ func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 		apiResponse(c, RespSuccess, nil, "")
 	}
 }
+
+// todo add sewage viewCreateSewage viewSewageList
+
+// post url: /sewage
+func (e *GinEnv) viewCreateSewage(c *gin.Context) {
+	verifyRole := "customer"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	solutionParams := &robodb.SewageParams{}
+	err := c.BindJSON(solutionParams)
+	if err != nil {
+		apiResponse(c, RespFailed, nil, err.Error())
+		return
+	}
+
+	err = robodb.CreateSewage(e.db, solutionParams, c)
+	if err != nil {
+		log.Error("创建方案错误!")
+		apiResponse(c, RespFailed, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, nil, "创建方案成功")
+	}
+}
+
+// url: /sln/:id
+func (e *GinEnv) viewSewageDetail(c *gin.Context) {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	slnDetail, err := robodb.FetchSewageDetail(e.db, c)
+	if err != nil {
+		log.Error("获取方案细节错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, slnDetail, "")
+	}
+}
+
+func (e *GinEnv) viewUpdateSewage(c *gin.Context)  {
+	verifyRole := "customer"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	sewageParams := &robodb.SewageParams{}
+	sewageParams.SlnNo = c.Param("id")
+
+	err := c.BindJSON(sewageParams)
+	if err != nil {
+		apiResponse(c, RespFailed, nil, err.Error())
+		return
+	}
+
+	err = robodb.UpdateSewage(e.db, sewageParams, c)
+	if err != nil {
+		log.Error("更新方案列表错误!")
+		apiResponse(c, RespFailed, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, nil, "更新方案成功")
+	}
+}

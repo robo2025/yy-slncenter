@@ -49,6 +49,12 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/sln/:id", env.viewSolutionDetail)
 	rg.PUT("/sln/:id", env.viewUpdateSolution)
 	rg.POST("/offer/:id", env.viewOfferSolution)
+
+	//sln是焊接方案,sewage是污水
+	rg.POST("/sewage", env.viewCreateSewage)
+	rg.GET("/sewage/:id", env.viewSewageDetail)
+	rg.PUT("/sewage/:id", env.viewUpdateSewage)
+
 }
 
 func registerRPCView(rg *gin.RouterGroup, env *GinEnv) {

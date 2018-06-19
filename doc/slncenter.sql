@@ -2,6 +2,33 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- Table structure for sln_basic_info for sewage
+-- --------------------------------------------------------------------------
+DROP TABLE IF EXISTS `sewage_info`;
+CREATE TABLE `sewage_info` (
+  `id`                  int(11)       NOT NULL AUTO_INCREMENT,
+  `sln_no`              varchar(20)   NOT NULL,
+  `sewage_business`     varchar(20)   DEFAULT NULL,
+  `sln_scenario`        varchar(20)   DEFAULT NULL,
+  `tech_method`         varchar(20)   DEFAULT NULL,
+  `general_norm`        varchar(20)   DEFAULT NULL,
+  `other_norm`          varchar(20)   DEFAULT NULL,
+  `daily_capacity`      decimal(8, 2) DEFAULT NULL,
+  `disinfector`         int(11)       DEFAULT NULL,
+  `valve`               int(11)       DEFAULT NULL,
+  `blower`              int(11)       DEFAULT NULL,
+  `stirrer`             int(11)       DEFAULT NULL,
+  `pump`                int(11)       DEFAULT NULL,
+  `doser`               int(11)       DEFAULT NULL,
+  `aux_equipment_nums`  int(11)       DEFAULT NULL,
+  `total_equipment_nums` int(11)      DEFAULT NULL,
+  `operating_size`      decimal(3,1)  DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sln_no` (`sln_no`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+-- ----------------------------
 -- Table structure for sln_basic_info
 -- ----------------------------
 DROP TABLE IF EXISTS `sln_basic_info`;
