@@ -15,24 +15,24 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	isType := c.Query("is_type")
 
 	dbData := []SlnBasicInfo{}
-
+	//db.Order("age desc, name").Find(&users)
 	switch role {
 	case 1: // customer
 		if isType != "" && isType != "all" {
-			db.Where("customer_id = ? AND sln_status = ?", uid, strings.ToUpper(isType)).Find(&dbData)
+			db.Order("-sln_date").Where("customer_id = ? AND sln_status = ?", uid, strings.ToUpper(isType)).Find(&dbData)
 		} else {
-			db.Where("customer_id = ?", uid).Find(&dbData)
+			db.Order("-sln_date").Where("customer_id = ?", uid).Find(&dbData)
 		}
 
 	case 2: // supplier
 		// 只能查看已发布和已报价的
-		db.Where("sln_status in (?)", []string{"P", "M"}).Find(&dbData)
+		db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M"}).Find(&dbData)
 
 	case 3, 4: // admin
 		if isType != "" && isType != "all" {
-			db.Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
+			db.Order("-sln_date").Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
 		} else {
-			db.Find(&dbData)
+			db.Order("-sln_date").Find(&dbData)
 		}
 	}
 
