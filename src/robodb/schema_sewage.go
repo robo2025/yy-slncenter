@@ -15,11 +15,11 @@ type SewageInfo struct {
 	Valve              int     `json:"valve"`
 	Blower             int     `json:"blower"`
 	Stirrer            int     `json:"stirrer"`
-	AuxEquipmentNubs   int     `json:"aux_equipment_nubs"`
-	TotalEquipmentNubs int     `json:"total_equipment_nubs"`
+	AuxEquipmentNubs   string  `json:"aux_equipment_nubs"`
+	TotalEquipmentNubs string  `json:"total_equipment_nubs"`
 	Pump			   int     `json:"pump"`
-	Doser			   int   	`json:"doser"`
-	OperatingSize	   float64	`json:"operating_size"`
+	Doser			   int     `json:"doser"`
+	OperatingSize	   string  `json:"operating_size"`
 }
 /*
     "SewageBusiness": "工业",
