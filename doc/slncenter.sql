@@ -82,7 +82,7 @@ CREATE TABLE `sln_user_info` (
   `sln_no`       varchar(20) NOT NULL,
   `pay_ratio`    int(11)              DEFAULT NULL,
   `welding_name` varchar(60)          DEFAULT NULL,
-  `welding_note` varchar(300)         DEFAULT NULL,
+  `sln_note` varchar(300)         DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sln_no` (`sln_no`)
 )
