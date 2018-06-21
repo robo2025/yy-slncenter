@@ -37,7 +37,6 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"},s,e).Find(&dbData)
 		} else {
 			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"},s,e).Find(&dbData)
-			//db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M"}).Find(&dbData)
 		}
 	case 3, 4: // admin
 		if isType != "" && isType != "all" {
