@@ -21,7 +21,7 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 	return db, nil
 }
 
-// 准备写入或者更新用的方案数据 prepareSolutionData
+// 准备写入或者更新用的方案数据
 func prepareWeldingData(params *WeldingParams, uid int) *WeldingParams {
 	// 准备数据
 	slnNo := strings.TrimSpace(params.SlnNo)
