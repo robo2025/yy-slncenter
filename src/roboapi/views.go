@@ -185,3 +185,19 @@ func (e *GinEnv) viewUpdateSewage(c *gin.Context)  {
 		apiResponse(c, RespSuccess, nil, "更新方案成功")
 	}
 }
+
+// url: /sln/:id
+func (e *GinEnv) viewDetail(c *gin.Context) {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	slnDetail, err := robodb.FetchDetail(e.db, c)
+	if err != nil {
+		log.Error("获取方案细节错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, slnDetail, "")
+	}
+}
