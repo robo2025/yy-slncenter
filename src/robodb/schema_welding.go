@@ -21,7 +21,7 @@ type SlnUserInfo struct {
 	SlnNo       string `json:"sln_no"`
 	PayRatio    int    `json:"pay_ratio"`
 	WeldingName string `json:"welding_name"`
-	WeldingNote string `json:"welding_note"`
+	SlnNote     string `json:"sln_note"`
 }
 
 // welding_info 表
