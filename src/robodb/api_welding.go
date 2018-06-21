@@ -20,7 +20,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	endTime := c.Query("end_time")
 	s, e := TimeToStamp(startTime, endTime)
 
-	limitStr := c.DefaultQuery("limit", "15")  //新增供应商后台切片
+	limitStr := c.DefaultQuery("limit", "15")  //新增suplier admin后台切片
 	offsetStr := c.DefaultQuery("offset", "0")
 	limit, _ := strconv.ParseUint(limitStr, 10, 32)
 	offset, _ := strconv.ParseUint(offsetStr, 10, 32)
@@ -51,6 +51,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		} else {
 			db.Order("-sln_date").Find(&dbData)
 		}
+		dbData = dbData[offset : offset+limit]
 	}
 
 	return dbData, nil
