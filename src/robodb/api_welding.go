@@ -14,12 +14,18 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	uid := c.MustGet("uid").(int)
 	role := c.MustGet("role").(int)
 	isType := c.Query("is_type")
-	slnNo := c.Query("sln_no")  //todo!!! 新增 供应商查询条件 单号+时间
+	slnNo := c.Query("sln_no") //todo!!! 新增 供应商查询条件 单号+时间
+
 	startTime := c.Query("start_time")
 	endTime := c.Query("end_time")
-	s,e := TimeToStamp(startTime,endTime)
-	fmt.Println(s,e)
+	s, e := TimeToStamp(startTime, endTime)
 
+	limitStr := c.DefaultQuery("limit", "15")  //新增供应商后台切片
+	offsetStr := c.DefaultQuery("offset", "0")
+	limit, _ := strconv.ParseUint(limitStr, 10, 32)
+	offset, _ := strconv.ParseUint(offsetStr, 10, 32)
+
+	fmt.Println(limit, offset)
 
 	dbData := []SlnBasicInfo{}
 	//db.Order("age desc, name").Find(&users)
@@ -34,10 +40,11 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	case 2: // supplier
 		// 只能查看已发布和已报价的
 		if slnNo != "" {
-			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"},s,e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
 		} else {
-			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"},s,e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
 		}
+		dbData = dbData[offset : offset+limit]
 	case 3, 4: // admin
 		if isType != "" && isType != "all" {
 			db.Order("-sln_date").Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
