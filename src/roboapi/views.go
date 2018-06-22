@@ -56,6 +56,15 @@ func (e *GinEnv) viewCreateWelding(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewWeldingDetail(c *gin.Context) {
+	slnID := c.Param("id")
+	basicInfo := &robodb.SlnBasicInfo{}
+	e.db.Where("sln_no = ?", slnID).First(basicInfo)
+	if basicInfo.SlnType != "welding" {
+		log.Error("获取方案细节错误!")
+		apiResponse(c, RespFailed, nil, "获取方案细节错误!该方案id不是welding类")
+		return
+	}
+
 	verifyRole := c.Query("role")
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
@@ -148,6 +157,15 @@ func (e *GinEnv) viewCreateSewage(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewSewageDetail(c *gin.Context) {
+	slnID := c.Param("id")
+	basicInfo := &robodb.SlnBasicInfo{}
+	e.db.Where("sln_no = ?", slnID).First(basicInfo)
+	if basicInfo.SlnType != "sewage" {
+		log.Error("获取方案细节错误!")
+		apiResponse(c, RespFailed, nil, "获取方案细节错误!该方案id不是sewage类")
+		return
+	}
+
 	verifyRole := c.Query("role")
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
