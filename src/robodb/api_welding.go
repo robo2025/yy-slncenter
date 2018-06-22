@@ -25,8 +25,6 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	limit, _ := strconv.ParseUint(limitStr, 10, 32)
 	offset, _ := strconv.ParseUint(offsetStr, 10, 32)
 
-	fmt.Println(limit, offset)
-
 	var dbdataLen,dbdataRange string
 	dbData := []SlnBasicInfo{}
 	//db.Order("age desc, name").Find(&users)
