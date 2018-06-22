@@ -46,6 +46,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		}
 		dbData = dbData[offset : offset+limit]
 	case 3, 4: // admin
+		db.Order("-sln_date").Where("sln_status = ?", []string{"P", "M", "E"},).Find(&dbData)
 		if isType != "" && isType != "all" {
 			db.Order("-sln_date").Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
 		} else {
