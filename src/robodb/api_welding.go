@@ -69,8 +69,8 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		}
 
 	}
-	c.Writer.Header().Add("CONTENT_TOTAL", dbdataLen)
-	c.Writer.Header().Add("CONTENT_RANGE", dbdataRange)
+	c.Writer.Header().Add("x-content-total", dbdataLen)
+	c.Writer.Header().Add("x-content-range", dbdataRange)
 	c.Next()
 	return dbData, nil
 }
