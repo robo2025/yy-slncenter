@@ -67,13 +67,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			dbData = dbData[offset:]
 			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+len(dbData))
 		}
-		//dbdataLen = strconv.Itoa(len(dbData))
-		//if len(dbData) > offset+limit {
-		//	dbData = dbData[offset : offset+limit]
-		//}else{
-		//	dbData=dbData[offset:]
-		//}
-		//dbdataRange = fmt.Sprintf("%d-%d", offset, len(dbData))
+
 	}
 	c.Writer.Header().Add("CONTENT_TOTAL", dbdataLen)
 	c.Writer.Header().Add("CONTENT_RANGE", dbdataRange)
