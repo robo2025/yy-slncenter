@@ -3,6 +3,7 @@ package robodb
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
@@ -15,7 +16,8 @@ func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
 		return resp, nil
 	} else if basicInfo.SlnType == "sewage" {
 		resp, _ := FetchSewageDetail(db, c)
-
+		fmt.Println(resp)
+		fmt.Println(resp.Customer.SewageInfo)
 		return resp, nil
 	}
 	return nil, nil

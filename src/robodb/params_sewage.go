@@ -5,7 +5,7 @@ package robodb
 type SewageParams struct {
 	SlnNo         string          `json:"sln_no" binding:"required"`
 	UID           int             `json:"-"`
-	SewageInfo    *SewageInfo     `json:"sewage_info"`
+	SewageInfo    *SewageInfo     `json:"sln_info"`  //todo
 	SlnBasicInfo  *SlnBasicInfo   `json:"sln_basic_info"`
 	SlnUserInfo   *SlnUserInfo    `json:"sln_user_info"`
 	SlnDevice 	  []SlnDevice 	  `json:"sln_device"`
