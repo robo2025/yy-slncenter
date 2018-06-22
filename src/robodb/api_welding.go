@@ -20,14 +20,14 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	endTime := c.Query("end_time")
 	s, e := TimeToStamp(startTime, endTime)
 
-	limitStr := c.DefaultQuery("limit", "15")  //新增suplier admin后台切片
+	limitStr := c.DefaultQuery("limit", "15")
 	offsetStr := c.DefaultQuery("offset", "0")
 	limit, _ := strconv.ParseUint(limitStr, 10, 32)
 	offset, _ := strconv.ParseUint(offsetStr, 10, 32)
 
 	var dbdataLen,dbdataRange string
 	dbData := []SlnBasicInfo{}
-	//db.Order("age desc, name").Find(&users)
+
 	switch role {
 	case 1: // customer
 		if isType != "" && isType != "all" {
