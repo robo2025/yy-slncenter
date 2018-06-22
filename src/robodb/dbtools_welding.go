@@ -16,6 +16,7 @@ func InitDB(sqlURL string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	db.LogMode(true)
 
 	db.SingularTable(true)
 	return db, nil

@@ -22,10 +22,10 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 
 	limitStr := c.DefaultQuery("limit", "15")
 	offsetStr := c.DefaultQuery("offset", "0")
-	limit, _ := strconv.ParseUint(limitStr, 10, 32)
-	offset, _ := strconv.ParseUint(offsetStr, 10, 32)
+	limit, _ := strconv.Atoi(limitStr)
+	offset, _ := strconv.Atoi(offsetStr)
 
-	var dbdataLen,dbdataRange string
+	var dbdataLen, dbdataRange string
 	dbData := []SlnBasicInfo{}
 
 	switch role {
@@ -43,21 +43,37 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		} else {
 			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
 		}
-		dbdataLen =  strconv.Itoa(len(dbData))
-
-		dbData = dbData[offset : offset+limit]
-		dbdataRange = fmt.Sprintf("%d-%d",offset, offset + limit)
+		dbdataLen = strconv.Itoa(len(dbData))
+		if len(dbData) > offset+limit {
+			dbData = dbData[offset : offset+limit]
+			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+limit)
+		} else {
+			dbData = dbData[offset:]
+			dbdataRange = fmt.Sprintf("%d-%d", offset, len(dbData))
+		}
 
 	case 3, 4: // admin
-		db.Order("-sln_date").Where("sln_status = ?", []string{"P", "M", "E"},).Find(&dbData)
+		db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M", "E"}, ).Find(&dbData)
 		if isType != "" && isType != "all" {
-			db.Order("-sln_date").Where("sln_status = ?", strings.ToUpper(isType)).Find(&dbData)
+			db.Order("-sln_date").Where("sln_status = ? ", strings.ToUpper(isType)).Find(&dbData)
 		} else {
 			db.Order("-sln_date").Find(&dbData)
 		}
-		dbdataLen =  strconv.Itoa(len(dbData))
-		dbdataRange = fmt.Sprintf("%d-%d",offset, offset + limit)
-		dbData = dbData[offset : offset+limit]
+		dbdataLen = strconv.Itoa(len(dbData))
+		if len(dbData) > offset+limit {
+			dbData = dbData[offset : offset+limit]
+			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+limit)
+		} else {
+			dbData = dbData[offset:]
+			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+len(dbData))
+		}
+		//dbdataLen = strconv.Itoa(len(dbData))
+		//if len(dbData) > offset+limit {
+		//	dbData = dbData[offset : offset+limit]
+		//}else{
+		//	dbData=dbData[offset:]
+		//}
+		//dbdataRange = fmt.Sprintf("%d-%d", offset, len(dbData))
 	}
 	c.Writer.Header().Add("CONTENT_TOTAL", dbdataLen)
 	c.Writer.Header().Add("CONTENT_RANGE", dbdataRange)
