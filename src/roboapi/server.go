@@ -24,6 +24,8 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 		gin.SetMode(gin.DebugMode)
 	}
 	router := gin.Default()
+	router.Use(cors.Default())  // cors
+
 	env := &GinEnv{db: db}
 
 	// Set API
