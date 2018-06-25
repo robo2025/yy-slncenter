@@ -39,7 +39,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	case 2: // supplier
 		// 只能查看已发布和已报价的
 		if slnNo != "" {
-			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, strings.ToUpper(isType), s, e).Find(&dbData)
 		} else {
 			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
 		}
