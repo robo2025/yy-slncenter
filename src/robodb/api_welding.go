@@ -69,6 +69,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		}
 
 	}
+	c.Header("Access-Control-Expose-Headers", "x-content-total,x-content-range,Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
 	c.Writer.Header().Add("x-content-total", dbdataLen)
 	c.Writer.Header().Add("x-content-range", dbdataRange)
 	c.Next()
