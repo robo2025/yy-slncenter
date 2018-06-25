@@ -56,6 +56,10 @@ func (e *GinEnv) viewCreateWelding(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewWeldingDetail(c *gin.Context) {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
 	slnID := c.Param("id")
 	basicInfo := &robodb.SlnBasicInfo{}
 	e.db.Where("sln_no = ?", slnID).First(basicInfo)
@@ -65,10 +69,6 @@ func (e *GinEnv) viewWeldingDetail(c *gin.Context) {
 		return
 	}
 
-	verifyRole := c.Query("role")
-	if err := checkAuthRole(c, verifyRole); err != nil {
-		return
-	}
 
 	slnDetail, err := robodb.FetchWeldingDetail(e.db, c)
 	if err != nil {
@@ -157,6 +157,11 @@ func (e *GinEnv) viewCreateSewage(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewSewageDetail(c *gin.Context) {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
 	slnID := c.Param("id")
 	basicInfo := &robodb.SlnBasicInfo{}
 	e.db.Where("sln_no = ?", slnID).First(basicInfo)
@@ -166,10 +171,6 @@ func (e *GinEnv) viewSewageDetail(c *gin.Context) {
 		return
 	}
 
-	verifyRole := c.Query("role")
-	if err := checkAuthRole(c, verifyRole); err != nil {
-		return
-	}
 
 	slnDetail, err := robodb.FetchSewageDetail(e.db, c)
 	if err != nil {
