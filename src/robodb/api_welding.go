@@ -57,10 +57,12 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 
 	case 3, 4: // admin
 		db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M", "E"}, ).Find(&dbData)
-		if isType != "" && isType != "all" {
-			db.Order("-sln_date").Where("sln_status = ? ", strings.ToUpper(isType)).Find(&dbData)
+		if slnNo != "" {
+			db.Order("-sln_date").Where("sln_no = ? And sln_date > (?) And sln_date < (?)", slnNo, s, e).Find(&dbData)
+		}else if isType != "" && isType != "all" {
+			db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType),s,e).Find(&dbData)
 		} else {
-			db.Order("-sln_date").Find(&dbData)
+			db.Order("-sln_date").Where("And sln_date > (?) And sln_date < (?)",s,e).Find(&dbData)
 		}
 		dbdataLen = strconv.Itoa(len(dbData))
 		if len(dbData) > offset+limit {

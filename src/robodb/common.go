@@ -5,14 +5,18 @@ import (
 )
 
 func TimeToStamp(startTime,endTime string) (s,e int) {
+	startTime += " 00:00:00"
+	endTime += " 23:59:59"
+
 	if startTime == "" && endTime == "" {
 		e = int(time.Now().Unix())
 		return s,e
 	}
-	ss, _ := time.Parse("2006-01-02", startTime)
+
+	ss, _ := time.Parse("2006-01-02 15:04:05", startTime)
 	s = int(ss.Unix())
 
-	ee, _ := time.Parse("2006-01-02", endTime)
+	ee, _ := time.Parse("2006-01-02 15:04:05", endTime)
 	e = int(ee.Unix())
 
 	return s,e
