@@ -6,6 +6,7 @@ import (
 	"robodb"
 	"roboapi"
 	log "github.com/sirupsen/logrus"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var listenURL string

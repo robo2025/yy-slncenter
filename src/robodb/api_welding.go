@@ -44,6 +44,8 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?)", strings.ToUpper(isType), s, e).Find(&dbData)
 		} else if isType == "all"  {
 			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
+		}else {
+			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
 		}
 
 		dbdataLen = strconv.Itoa(len(dbData))
@@ -60,9 +62,9 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		if slnNo != "" {
 			db.Order("-sln_date").Where("sln_no = ? And sln_date > (?) And sln_date < (?)", slnNo, s, e).Find(&dbData)
 		}else if isType != "" && isType != "all" {
-			db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType),s,e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType), s, e).Find(&dbData)
 		} else {
-			db.Order("-sln_date").Where("And sln_date > (?) And sln_date < (?)",s,e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_date > (?) And sln_date < (?)",s,e).Find(&dbData)
 		}
 		dbdataLen = strconv.Itoa(len(dbData))
 		if len(dbData) > offset+limit {
