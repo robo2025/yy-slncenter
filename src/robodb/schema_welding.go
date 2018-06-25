@@ -28,8 +28,8 @@ type SlnUserInfo struct {
 type WeldingInfo struct {
 	ID                int     `json:"-"`
 	SlnNo             string  `json:"sln_no"`
-	WeldingBusiness   string  `json:"welding_business"`
-	WeldingScenario   string  `json:"welding_scenario"`
+	WeldingBusiness   string  `json:"business"`  // todo
+	WeldingScenario   string  `json:"scenario"`  //todo
 	WeldingMetal      string  `json:"welding_metal"`
 	WeldingEfficiency string  `json:"welding_efficiency"`
 	WeldingSplash     string  `json:"welding_splash"`

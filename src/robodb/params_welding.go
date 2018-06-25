@@ -6,7 +6,7 @@ type WeldingParams struct {
 	UID           int             `json:"-"`
 	SlnBasicInfo  *SlnBasicInfo   `json:"sln_basic_info"`
 	SlnUserInfo   *SlnUserInfo    `json:"sln_user_info"`
-	WeldingInfo   *WeldingInfo    `json:"welding_info"`  //todo
+	WeldingInfo   *WeldingInfo    `json:"sln_info"`  //todo
 	SlnDevice 	  []SlnDevice     `json:"sln_device"`
 	SlnFile   	  []SlnFile   	  `json:"sln_file"`
 
