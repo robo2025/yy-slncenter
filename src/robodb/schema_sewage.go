@@ -5,8 +5,8 @@ package robodb
 type SewageInfo struct {
 	ID                 int     `json:"-"`
 	SlnNo              string  `json:"sln_no"`
-	SewageBusiness     string  `json:"business"`
-	SewageScenario     string  `json:"scenario"`
+	SewageBusiness     string  `json:"sewage_business"`
+	SewageScenario     string  `json:"sewage_scenario"`
 	TechMethod         string  `json:"tech_method"`
 	GeneralNorm        string  `json:"general_norm"`
 	OtherNorm          string  `json:"other_norm"`
