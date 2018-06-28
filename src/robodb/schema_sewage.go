@@ -21,20 +21,3 @@ type SewageInfo struct {
 	Doser			   int     `json:"doser"`
 	OperatingSize	   string  `json:"operating_size"`
 }
-/*
-    "SewageBusiness": "工业",
-    "SewageScenario": "场景",
-    "TechMethod": "为什么没汉字",
-    "GeneralNorm": "为什么没汉字",
-    "OtherNorm": "为什么没汉字",
-    "DailyCapacity": 10.5,
-    "Disinfector": 1,
-    "Valve": 2,
-    "Blower": 10,
-    "Stirrer": 12,
-    "AuxEquipmentNubs": 12,
-    "TotalEquipmentNubs": 12,
-    "Pump": 12,
-    "Doser": 12,
-    "OperatingSize":1.5
-*/

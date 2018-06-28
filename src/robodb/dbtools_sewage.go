@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"roboutil"
 )
 
 // 准备写入或者更新用的方案数据
@@ -23,6 +24,8 @@ func prepareSewageData(params *SewageParams, uid int) *SewageParams {
 		slnBasicInfo.CustomerID = uid
 		slnBasicInfo.SlnDate = int(currentDate.Unix())
 		slnBasicInfo.SlnExpired = int(currentDate.AddDate(0, 0, 90).Unix())
+		slnBasicInfo.CustomerName = roboutil.HttpGet(uid)
+		slnBasicInfo.AssignStatus = string(AssignStatusW)
 	}
 
 	// sln_user_info 表

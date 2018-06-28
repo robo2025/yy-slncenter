@@ -35,7 +35,7 @@ func InitCmd() {
 	color.Cyan(cmdBanner)
 	// register params
 	rootCmd.PersistentFlags().StringVarP(&listenURL, "listen", "l", "127.0.0.1:9000", "listen url")
-	rootCmd.PersistentFlags().StringVarP(&dbURL, "database", "d", "root:root@tcp(localhost:3306)/mysql?charset=utf-8", "database url")
+	rootCmd.PersistentFlags().StringVarP(&dbURL, "database", "d", "root:root@tcp(localhost:3306)/sln?charset=utf-8", "database url")
 	// execute
 	rootCmd.Execute()
 }

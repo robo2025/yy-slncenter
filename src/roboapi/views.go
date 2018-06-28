@@ -110,6 +110,15 @@ func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
 	}
+	slnID := c.Param("id")
+	uid := c.MustGet("uid").(int)
+	assignInfo := &robodb.SlnAssign{}
+	e.db.Where("sln_no = ?", slnID).First(assignInfo)
+	if assignInfo.SupplierId != uid {
+		log.Error("请求报价错误!")
+		apiResponse(c, RespFailed, nil, "请求报价错误!该方案并没有指派给这个供应商")
+		return
+	}
 
 	// 解析请求
 	offerParams := &robodb.OfferParams{}
@@ -218,5 +227,32 @@ func (e *GinEnv) viewDetail(c *gin.Context) {
 		apiResponse(c, RespNoData, nil, err.Error())
 	} else {
 		apiResponse(c, RespSuccess, slnDetail, "")
+	}
+}
+
+// url: /assign/:id
+func (e *GinEnv) viewAssignSolution(c *gin.Context)  {
+	verifyRole := "admin"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	// 解析请求
+	assignParams := &robodb.SlnAssign{}
+	////robodb.OfferParams{}
+	assignParams.SlnNo = c.Param("id")
+	//err := c.BindJSON(assignParams)
+	//if err != nil {
+	//	apiResponse(c, RespFailed, nil, err.Error())
+	//	return
+	//}
+
+	err := robodb.AssignSolution(e.db, assignParams, c)
+
+	if err != nil {
+		log.Error("方案指派错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, nil, "")
 	}
 }

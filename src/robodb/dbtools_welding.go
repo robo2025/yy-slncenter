@@ -7,6 +7,7 @@ import (
 	"errors"
 	"strings"
 	"github.com/gin-gonic/gin"
+	"roboutil"
 )
 
 // InitDB 初始化数据库
@@ -37,6 +38,9 @@ func prepareWeldingData(params *WeldingParams, uid int) *WeldingParams {
 		slnBasicInfo.CustomerID = uid
 		slnBasicInfo.SlnDate = int(currentDate.Unix())
 		slnBasicInfo.SlnExpired = int(currentDate.AddDate(0, 0, 90).Unix())
+		slnBasicInfo.CustomerName = roboutil.HttpGet(uid)
+		slnBasicInfo.AssignStatus = string(AssignStatusW)
+
 	}
 
 	// sln_user_info 表
@@ -102,6 +106,8 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 		slnSupplierInfo.ExpiredDate = int(currentDate.AddDate(0, 0, 30).Unix())
 	}
 
+	// sln_basic_info
+	//slnBasicInfo := params
 	// welding_device 表
 	slnDevice := make([]SlnDevice, 0)
 	if len(params.SlnDevice) != 0 {
@@ -293,7 +299,7 @@ func updateWeldingData(db *gorm.DB, params *WeldingParams) error {
 	return tx.Commit().Error
 }
 
-// 写入方案数据
+// 写入方案数据   todo 创建时,指派状态默认为 未指派 (W)   Y
 func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	var err error
 
@@ -304,7 +310,7 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	}
 
 	if slnBasicInfo.SlnStatus != string(SlnStatusPublish) {
-		return errors.New("该方案不可以报价")
+		return errors.New("该方案不可以指派")
 	}
 
 	// 写入数据库
@@ -324,7 +330,10 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
 		SupplierID:    params.SlnSupplierInfo.UserID,
 		SupplierPrice: params.SlnSupplierInfo.TotalPrice,
-		SlnStatus:     string(SlnStatusOffer),
+		AssignStatus:     string(AssignStatusY),
+		SupplierName:  roboutil.HttpGet(params.SlnSupplierInfo.UserID),
+		SpDate:		   int(time.Now().Unix()),			//报价日期
+
 	})
 	if err != nil {
 		tx.Rollback()

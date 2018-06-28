@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"errors"
 	"fmt"
+	"roboutil"
 )
 
 // 获取方案列表
@@ -18,7 +19,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 
 	startTime := c.Query("start_time")
 	endTime := c.Query("end_time")
-	s, e := TimeToStamp(startTime, endTime)
+	s, e := roboutil.TimeToStamp(startTime, endTime)
 
 	limitStr := c.DefaultQuery("limit", "15")
 	offsetStr := c.DefaultQuery("offset", "0")
@@ -39,13 +40,13 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	case 2: // supplier
 		// 只能查看已发布和已报价的
 		if slnNo != "" {
-			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
+			db.Order("-sln_date").Where("supplier_id = ? And sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
 		} else if isType != "" && isType != "all" {
-			db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?)", strings.ToUpper(isType), s, e).Find(&dbData)
+			db.Order("-sln_date").Where("supplier_id = ? And sln_status = ? And sln_date > (?) And sln_date < (?)", uid, strings.ToUpper(isType), s, e).Find(&dbData)
 		} else if isType == "all" {
-			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
+			db.Order("-sln_date").Where("supplier_id = ? And sln_status in (?) And sln_date > (?) And sln_date < (?)", uid, []string{"P", "M"}, s, e).Find(&dbData)
 		} else {
-			db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M"}, s, e).Find(&dbData)
+			db.Order("-sln_date").Where("supplier_id = ? And sln_status in (?) And sln_date > (?) And sln_date < (?)", uid, []string{"P", "M"}, s, e).Find(&dbData)
 		}
 
 		dbdataLen = strconv.Itoa(len(dbData))
