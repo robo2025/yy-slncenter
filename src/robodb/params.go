@@ -20,7 +20,7 @@ type SlnStatus string
 const (
 	SlnStatusSave    SlnStatus = "S"
 	SlnStatusPublish SlnStatus = "P"
-	SlnStatusOffer   SlnStatus = "M"
+	SlnStatusOffer   SlnStatus = "M"   //string(SlnStatusOffer)
 	SlnStatusExpired SlnStatus = "E"
 )
 type AssignStatus string

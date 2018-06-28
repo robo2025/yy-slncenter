@@ -28,7 +28,8 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 
 	var dbdataLen, dbdataRange string
 	dbData := []SlnBasicInfo{}
-
+	slnNoData := []SlnAssign{}
+	slnNOList := []string{}
 	switch role {
 	case 1: // customer
 		if isType != "" && isType != "all" {
@@ -39,14 +40,23 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 
 	case 2: // supplier
 		// 只能查看已发布和已报价的
+		db.Where("supplier_id = ?", uid).Find(&slnNoData)
+
+		for i := 0; i < len(slnNoData); i++ {
+			slnNOList = append(slnNOList, slnNoData[i].SlnNo)
+		}
+		fmt.Println(slnNOList)
+
 		if slnNo != "" {
-			db.Order("-sln_date").Where("supplier_id = ? And sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
 		} else if isType != "" && isType != "all" {
-			db.Order("-sln_date").Where("supplier_id = ? And sln_status = ? And sln_date > (?) And sln_date < (?)", uid, strings.ToUpper(isType), s, e).Find(&dbData)
+			//db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?)", uid, strings.ToUpper(isType), s, e).Find(&dbData)
+			db.Where("sln_no in (?) And sln_status = ? And sln_date > (?) And sln_date < (?) ", slnNOList, strings.ToUpper(isType), s, e).Find(&dbData)
 		} else if isType == "all" {
-			db.Order("-sln_date").Where("supplier_id = ? And sln_status in (?) And sln_date > (?) And sln_date < (?)", uid, []string{"P", "M"}, s, e).Find(&dbData)
+			//db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", uid, []string{"P", "M"}, s, e).Find(&dbData)
+			db.Where("sln_no in (?) And sln_date > (?) And sln_date < (?) ", slnNOList, s, e).Find(&dbData)
 		} else {
-			db.Order("-sln_date").Where("supplier_id = ? And sln_status in (?) And sln_date > (?) And sln_date < (?)", uid, []string{"P", "M"}, s, e).Find(&dbData)
+			db.Where("sln_no in (?) And sln_date > (?) And sln_date < (?) ", slnNOList, s, e).Find(&dbData)
 		}
 
 		dbdataLen = strconv.Itoa(len(dbData))
@@ -61,7 +71,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	case 3, 4: // admin
 		//db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M", "E"}, ).Find(&dbData)
 		if slnNo != "" {
-			db.Order("-sln_date").Where("sln_status in (?) And sln_no = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"},slnNo, s, e).Find(&dbData)
+			db.Order("-sln_date").Where("sln_status in (?) And sln_no = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnNo, s, e).Find(&dbData)
 		} else if isType != "" && isType != "all" {
 			db.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType), s, e).Find(&dbData)
 		} else {
