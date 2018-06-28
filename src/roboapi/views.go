@@ -248,7 +248,7 @@ func (e *GinEnv) viewAssignSolution(c *gin.Context)  {
 	err = robodb.AssignSolution(e.db, assignParams, c)
 	if err != nil {
 		log.Error("方案指派错误!")
-		apiResponse(c, RespNoData, nil, err.Error())
+		apiResponse(c, RespFailed, nil, err.Error())
 	} else {
 		apiResponse(c, RespSuccess, nil, "")
 	}

@@ -77,8 +77,8 @@ type SlnBasicInfo struct {
 	SupplierName  string  `json:"supplier_name"` //
 	SupplierPrice float64 `json:"supplier_price"`
 	SlnStatus     string  `json:"sln_status"`
-	SpDate        int     `json:"sp_date"` //报价时间
-	AssignStatus  string     `json:"assign_status"`  // 指派状态
+	SpDate        int     `json:"sp_date"`       //报价时间
+	AssignStatus  string  `json:"assign_status"` // 指派状态
 }
 
 type SlnAssign struct {
@@ -87,4 +87,3 @@ type SlnAssign struct {
 	SupplierId int    `json:"supplier_id"`
 	AddTime    int    `json:"add_time"`
 }
-
