@@ -4,7 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/gin-gonic/gin"
 	"fmt"
-	"strconv"
 )
 
 func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
@@ -24,10 +23,8 @@ func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
 	return nil, nil
 }
 
-// 方案报价
-func AssignSolution(db *gorm.DB, params *SlnAssign, c *gin.Context) error {
-	supplierId := c.Query("supplier_id")
-	uid, _ :=strconv.Atoi(supplierId)
-	dbParams := prepareAssignData(params, uid)
+// 方案指派
+func AssignSolution(db *gorm.DB, params *AssignParams, c *gin.Context) error {
+	dbParams := prepareAssignData(params)
 	return writeAssignData(db, dbParams)
 }

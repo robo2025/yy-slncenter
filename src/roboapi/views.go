@@ -238,17 +238,14 @@ func (e *GinEnv) viewAssignSolution(c *gin.Context)  {
 	}
 
 	// 解析请求
-	assignParams := &robodb.SlnAssign{}
-	////robodb.OfferParams{}
-	assignParams.SlnNo = c.Param("id")
-	//err := c.BindJSON(assignParams)
-	//if err != nil {
-	//	apiResponse(c, RespFailed, nil, err.Error())
-	//	return
-	//}
+	assignParams := &robodb.AssignParams{}
+	err := c.BindJSON(assignParams)
+	if err != nil {
+		apiResponse(c, RespFailed, nil, err.Error())
+		return
+	}
 
-	err := robodb.AssignSolution(e.db, assignParams, c)
-
+	err = robodb.AssignSolution(e.db, assignParams, c)
 	if err != nil {
 		log.Error("方案指派错误!")
 		apiResponse(c, RespNoData, nil, err.Error())

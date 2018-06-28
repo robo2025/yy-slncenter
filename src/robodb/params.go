@@ -29,3 +29,7 @@ const (
 	AssignStatusW  AssignStatus = "W"	//未指派
 	AssignStatusY AssignStatus = "Y"    //已指派
 )
+
+type AssignParams struct {
+	SlnAssign *SlnAssign `json:"sln_assign"`
+}

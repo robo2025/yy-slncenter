@@ -1,33 +1,25 @@
 package robodb
 
 import (
-	"strings"
-	"time"
 	"github.com/jinzhu/gorm"
 	"errors"
+	"time"
 )
 
 
 // 准备指派方案数据
-func prepareAssignData(params *SlnAssign, uid int) *SlnAssign {
-	// 准备数据
-	slnNo := strings.TrimSpace(params.SlnNo)
-
+func prepareAssignData(params *AssignParams) *AssignParams {
 	currentTime := time.Now().Unix()
-	resp := &SlnAssign{
-		SlnNo:      slnNo,
-		SupplierId: uid,
-		AddTime:    int(currentTime),
-	}
-	return resp
+	params.SlnAssign.AddTime = int(currentTime)
+	return params
 }
 
 // 写入指派方案数据
-func writeAssignData(db *gorm.DB, params *SlnAssign) error {
+func writeAssignData(db *gorm.DB, params *AssignParams) error {
 	var err error
 
 	slnBasicInfo := &SlnBasicInfo{}
-	db.Where("sln_no = ?", params.SlnNo).First(slnBasicInfo)
+	db.Where("sln_no = ?", params.SlnAssign.SlnNo).First(slnBasicInfo)
 	if slnBasicInfo.ID == 0 {
 		return errors.New("找不到相应方案")
 	}
@@ -63,7 +55,7 @@ func writeAssignData(db *gorm.DB, params *SlnAssign) error {
 	}
 
 	// 写入 sln_assign 表
-	err = tx.Create(params).Error
+	err = tx.Create(params.SlnAssign).Error
 	if err != nil {
 		tx.Rollback()
 		return err

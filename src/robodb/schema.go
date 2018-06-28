@@ -87,3 +87,4 @@ type SlnAssign struct {
 	SupplierId int    `json:"supplier_id"`
 	AddTime    int    `json:"add_time"`
 }
+
