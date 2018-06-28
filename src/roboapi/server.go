@@ -53,7 +53,7 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.PUT("/welding/:id", env.viewUpdateWelding)
 
 	rg.POST("/offer/:id", env.viewOfferSolution)	//报价
-	rg.POST("assign/:id", env.viewAssignSolution) //指派
+	rg.PUT("/assign/:id", env.viewAssignSolution) //指派
 
 
 	rg.POST("/sewage", env.viewCreateSewage)    // sewage 是污水
