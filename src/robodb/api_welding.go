@@ -45,7 +45,6 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		for i := 0; i < len(slnNoData); i++ {
 			slnNOList = append(slnNOList, slnNoData[i].SlnNo)
 		}
-		fmt.Println(slnNOList)
 
 		if slnNo != "" {
 			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)

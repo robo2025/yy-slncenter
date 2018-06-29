@@ -105,18 +105,27 @@ func (e *GinEnv) viewUpdateWelding(c *gin.Context) {
 }
 
 // post url: /offer/:id
-func (e *GinEnv) viewOfferSolution(c *gin.Context) {
+func (e *GinEnv) 	viewOfferSolution(c *gin.Context) {
 	verifyRole := "supplier"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
 	}
+	// 验证
 	slnID := c.Param("id")
-	uid := c.MustGet("uid").(int)
 	assignInfo := &robodb.SlnAssign{}
+	uid := c.MustGet("uid").(int)
 	e.db.Where("sln_no = ?", slnID).First(assignInfo)
 	if assignInfo.SupplierId != uid {
 		log.Error("请求报价错误!")
 		apiResponse(c, RespFailed, nil, "请求报价错误!该方案并没有指派给这个供应商")
+		return
+	}
+	supplierInfo := &robodb.SlnSupplierInfo{}
+
+	e.db.Where("sln_no = ?", slnID).First(supplierInfo)
+	if supplierInfo.SlnNo == slnID && supplierInfo.UserID == uid{
+		log.Error("请求报价错误!")
+		apiResponse(c, RespFailed, nil, "不能重复报价")
 		return
 	}
 

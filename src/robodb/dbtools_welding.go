@@ -104,6 +104,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 		slnSupplierInfo.SlnNo = slnNo
 		slnSupplierInfo.UserID = uid
 		slnSupplierInfo.ExpiredDate = int(currentDate.AddDate(0, 0, 30).Unix())
+
 	}
 
 	// sln_basic_info
@@ -328,12 +329,12 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 
 	// 更新 sln_basic_info 表
 	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
+		SlnStatus:     string(SlnStatusOffer),
 		SupplierID:    params.SlnSupplierInfo.UserID,
 		SupplierPrice: params.SlnSupplierInfo.TotalPrice,
-		AssignStatus:     string(AssignStatusY),
+		AssignStatus:  string(AssignStatusY),
 		SupplierName:  roboutil.HttpGet(params.SlnSupplierInfo.UserID),
-		SpDate:		   int(time.Now().Unix()),			//报价日期
-
+		SpDate:        int(time.Now().Unix()), //报价日期
 	})
 	if err != nil {
 		tx.Rollback()
