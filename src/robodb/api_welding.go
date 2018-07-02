@@ -14,19 +14,19 @@ import (
 func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	uid := c.MustGet("uid").(int)
 	role := c.MustGet("role").(int)
-	isType := c.Query("is_type")   // sln_status
+	isType := c.Query("is_type") // sln_status 报价状态
 	slnNo := c.Query("sln_no")
 	slnName := c.Query("sln_name")
 
-	customerName := c.Query("customer_name")  //""
+	customerName := c.Query("customer_name") //""
 	supplierName := c.Query("supplier_name")
-	assignStatus := c.Query("assign_status")
-	spStart := c.Query("sp_start")   //sp_date
-	spEnd := c.Query("sp_end")			// sp date
-	sp_s,sp_e := roboutil.TimeToStamp2(spStart, spEnd)
+	assignStatus := c.Query("assign_status") //指派状态
+	spStart := c.Query("sp_start")           //sp_date 报价开始时间
+	spEnd := c.Query("sp_end")               // sp date 报价结束时间
+	spS, spE := roboutil.TimeToStamp2(spStart, spEnd)
 
-	startTime := c.Query("start_time")  //sln date
-	endTime := c.Query("end_time")			// sln date
+	startTime := c.Query("start_time") //sln date
+	endTime := c.Query("end_time")     // sln date
 	s, e := roboutil.TimeToStamp(startTime, endTime)
 
 	limitStr := c.DefaultQuery("limit", "15")
@@ -54,7 +54,6 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			slnNOList = append(slnNOList, slnNoData[i].SlnNo)
 		}
 
-
 		if slnNo != "" {
 			db.Order("-sln_date").Where("sln_no = ? AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNo, []string{"P", "M"}, s, e).Find(&dbData)
 		} else if isType != "" && isType != "all" {
@@ -76,38 +75,45 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			dbdataRange = fmt.Sprintf("%d-%d", offset, len(dbData))
 		}
 
-
 	case 3, 4: // admin
 		//db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M", "E"}, ).Find(&dbData)
+		//if slnNo != "" {
+		//	db.Order("-sln_date").Where("sln_status in (?) And sln_no = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnNo, s, e).Find(&dbData)
+		//} else if slnName != "" {
+		//	db.Order("-sln_date").Where("sln_status in (?) And sln_name = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnName, s, e).Find(&dbData)
+		//}else {
+		var DB *gorm.DB //customer_name 	supplier_name	 sln_status 	assign_status 	sln_date 	sp_date
+		DB = db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
 		if slnNo != "" {
-			db.Order("-sln_date").Where("sln_status in (?) And sln_no = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnNo, s, e).Find(&dbData)
-		} else if slnName != "" {
-			db.Order("-sln_date").Where("sln_status in (?) And sln_name = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnName, s, e).Find(&dbData)
-		}else {
-			var DB *gorm.DB  //customer_name 	supplier_name	 sln_status 	assign_status 	sln_date 	sp_date
-			DB = db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
-			if isType != "" && isType != "all" {
-				DB = DB.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType), s, e)
-			}
-			//else {
-			//	DB = DB.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
-			//}
-			if customerName != ""{
-				DB = DB.Where("customer_name = ?", customerName)
-			}
-			if supplierName != ""{
-				DB = DB.Where("supplier_name = ?", supplierName)
-			}
-			if assignStatus != ""{
-				DB = DB.Where("assign_status = ?", assignStatus)
-			}
-			if sp_s != 0 && sp_e != 0  {
-				DB = DB.Where("sp_date > (?) And sp_date < (?)", sp_s, sp_e)
-			}
-
-			DB.Order("-sln_date").Find(&dbData)
+			DB = DB.Where("sln_no = ?", slnNo)
+		}
+		if slnName != "" {
+			DB = DB.Where("sln_name = ?", slnName)
+		}
+		if isType != "" && isType != "all" {
+			DB = DB.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType), s, e)
+		}
+		//else {
+		//	DB = DB.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
+		//}
+		if customerName != "" {
+			DB = DB.Where("customer_name = ?", customerName)
+		}
+		if supplierName != "" {
+			DB = DB.Where("supplier_name = ?", supplierName)
+		}
+		if assignStatus != "" && assignStatus != "all" {
+			DB = DB.Where("assign_status = ?", assignStatus)
+		}
+		if spS != 0 {
+			DB = DB.Where("sp_date > (?)",spS)
+		}
+		if spE != 0 {
+			DB = DB.Where("sp_date < (?)",spE)
 		}
 
+		DB.Order("-sln_date").Find(&dbData)
+		//}
 
 		dbdataLen = strconv.Itoa(len(dbData))
 		if len(dbData) > offset+limit {
