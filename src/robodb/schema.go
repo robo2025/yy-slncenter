@@ -79,6 +79,7 @@ type SlnBasicInfo struct {
 	SlnStatus     string  `json:"sln_status"`
 	SpDate        int     `json:"sp_date"`       //报价时间
 	AssignStatus  string  `json:"assign_status"` // 指派状态
+	SlnMsg        string  `json:"sln_msg"`
 }
 
 type SlnAssign struct {
