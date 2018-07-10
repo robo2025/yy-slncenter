@@ -37,8 +37,8 @@ type WeldingInfo struct {
 	WeldingMethod     string  `json:"welding_method"`
 	WeldingGas        string  `json:"welding_gas"`
 	GasCost           string  `json:"gas_cost"`
-	MaxHeight         float64 `json:"max_height"`
-	MaxRadius         float64 `json:"max_radius"`
+	MaxHeight         string `json:"max_height"`
+	MaxRadius         string `json:"max_radius"`
 }
 
 // welding_file 表 Sln File
