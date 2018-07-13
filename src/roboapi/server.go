@@ -24,7 +24,7 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 		gin.SetMode(gin.DebugMode)
 	}
 	router := gin.Default()
-	router.Use(cors.Default())  // cors
+	router.Use(cors.Default()) // cors
 
 	env := &GinEnv{db: db}
 
@@ -46,22 +46,20 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 
 func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/", env.viewIndex)
-	rg.GET("/sln", env.viewSolutionList)   //所有方案列表
+	rg.GET("/sln", env.viewSolutionList) //所有方案列表
 
-	rg.POST("/welding", env.viewCreateWelding)   //welding 是焊接方案
+	rg.POST("/welding", env.viewCreateWelding) //welding 是焊接方案
 	rg.GET("/welding/:id", env.viewWeldingDetail)
 	rg.PUT("/welding/:id", env.viewUpdateWelding)
 
-	rg.POST("/offer/:id", env.viewOfferSolution)	//报价
-	rg.PUT("/assign", env.viewAssignSolution) //指派
+	rg.POST("/offer/:id", env.viewOfferSolution) //报价
+	rg.PUT("/assign", env.viewAssignSolution)    //指派
 
-
-	rg.POST("/sewage", env.viewCreateSewage)    // sewage 是污水
+	rg.POST("/sewage", env.viewCreateSewage) // sewage 是污水
 	rg.GET("/sewage/:id", env.viewSewageDetail)
 	rg.PUT("/sewage/:id", env.viewUpdateSewage)
 
 	rg.GET("/sln/:id", env.viewDetail) //获取方案详情
-
 
 }
 

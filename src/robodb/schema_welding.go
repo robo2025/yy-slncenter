@@ -15,6 +15,9 @@ type WeldingInfo struct {
 	GasCost           string `json:"gas_cost"`
 	MaxHeight         string `json:"max_height"`
 	MaxRadius         string `json:"max_radius"`
+	WeldingPosition   string `json:"welding_position"` // 焊接位置
+	InterfaceType     string `json:"interface_type"`   // 接口类型
+	BevelType         string `json:"bevel_type"`       // 坡口类型
 }
 
 // welding_tech_param 表
