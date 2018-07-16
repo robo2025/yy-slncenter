@@ -20,16 +20,17 @@ type SlnStatus string
 const (
 	SlnStatusSave    SlnStatus = "S"
 	SlnStatusPublish SlnStatus = "P"
-	SlnStatusOffer   SlnStatus = "M"   //string(SlnStatusOffer)
+	SlnStatusOffer   SlnStatus = "M" //string(SlnStatusOffer)
 	SlnStatusExpired SlnStatus = "E"
 )
+
 type AssignStatus string
 
 const (
-	AssignStatusW  AssignStatus = "W"	//未指派
-	AssignStatusY AssignStatus = "Y"    //已指派
+	AssignStatusW AssignStatus = "W" //未指派
+	AssignStatusY AssignStatus = "Y" //已指派
 )
 
 type AssignParams struct {
-	SlnAssign *SlnAssign `json:"sln_assign"`
+	SlnAssign       *SlnAssign       `json:"sln_assign"`
 }

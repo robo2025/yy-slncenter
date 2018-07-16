@@ -123,7 +123,7 @@ func (e *GinEnv) 	viewOfferSolution(c *gin.Context) {
 	supplierInfo := &robodb.SlnSupplierInfo{}
 
 	e.db.Where("sln_no = ?", slnID).First(supplierInfo)
-	if supplierInfo.SlnNo == slnID && supplierInfo.UserID == uid{
+	if supplierInfo.SlnNo == slnID && supplierInfo.UserID == uid && supplierInfo.TotalPrice != 0 {
 		log.Error("请求报价错误!")
 		apiResponse(c, RespFailed, nil, "不能重复报价")
 		return

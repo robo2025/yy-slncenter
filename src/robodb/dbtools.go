@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-
 // 准备指派方案数据
 func prepareAssignData(params *AssignParams) *AssignParams {
 	currentTime := time.Now().Unix()
@@ -31,6 +30,10 @@ func writeAssignData(db *gorm.DB, params *AssignParams) error {
 	if slnBasicInfo.AssignStatus == string(AssignStatusY) {
 		return errors.New("该方案不可以指派")
 	}
+	// 指派后让运营看到指派给了哪位供应商
+	SlnSupplierInfo := &SlnSupplierInfo{}
+	SlnSupplierInfo.SlnNo = params.SlnAssign.SlnNo
+	SlnSupplierInfo.UserID = params.SlnAssign.SupplierId
 
 	// 写入数据库
 	tx := db.Begin()
@@ -45,9 +48,16 @@ func writeAssignData(db *gorm.DB, params *AssignParams) error {
 		return tx.Error
 	}
 
+	// 创建sln_supplier_info表信息
+	err = tx.Create(SlnSupplierInfo).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	// 更新 sln_basic_info 表
 	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
-		AssignStatus:     string(AssignStatusY),
+		AssignStatus: string(AssignStatusY),
 	})
 	if err != nil {
 		tx.Rollback()

@@ -107,8 +107,6 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 
 	}
 
-	// sln_basic_info
-	//slnBasicInfo := params
 	// welding_device 表
 	slnDevice := make([]SlnDevice, 0)
 	if len(params.SlnDevice) != 0 {
@@ -300,7 +298,7 @@ func updateWeldingData(db *gorm.DB, params *WeldingParams) error {
 	return tx.Commit().Error
 }
 
-// 写入方案数据   todo 创建时,指派状态默认为 未指派 (W)   Y
+// 写入报价方案数据   todo 创建时,指派状态默认为 未指派 (W)   Y
 func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	var err error
 
@@ -313,6 +311,8 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	if slnBasicInfo.SlnStatus != string(SlnStatusPublish) {
 		return errors.New("该方案不可以指派")
 	}
+	slnSupplierInfo := &SlnSupplierInfo{}
+	db.Where("sln_no = ?", params.SlnNo).First(slnSupplierInfo)
 
 	// 写入数据库
 	tx := db.Begin()
@@ -342,7 +342,15 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	}
 
 	// 写入 sln_supplier_info 表
-	err = tx.Create(params.SlnSupplierInfo).Error
+	tx.Model(slnSupplierInfo).Updates(SlnSupplierInfo{
+		TotalPrice:   params.SlnSupplierInfo.TotalPrice,
+		FreightPrice: params.SlnSupplierInfo.FreightPrice,
+		PayRatio:     params.SlnSupplierInfo.PayRatio,
+		ExpiredDate:  params.SlnSupplierInfo.ExpiredDate,
+		DeliveryDate: params.SlnSupplierInfo.DeliveryDate,
+		SlnDesc:      params.SlnSupplierInfo.SlnDesc,
+		SlnNote:      params.SlnSupplierInfo.SlnNote,
+	})
 	if err != nil {
 		tx.Rollback()
 		return err
