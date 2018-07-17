@@ -153,10 +153,11 @@ func FetchWeldingDetail(db *gorm.DB, c *gin.Context) (*WeldingDetailParams, erro
 
 	// 读取报价数据
 	resp.Supplier = nil
-	//if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
-	supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
-	if err == nil {
-		resp.Supplier = supplier
+	if customer.SlnBasicInfo.SlnStatus == string(SlnStatusPublish) || customer.SlnBasicInfo.AssignStatus == string(AssignStatusY) {
+		supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
+		if err == nil {
+			resp.Supplier = supplier
+		}
 	}
 
 	return resp, nil
