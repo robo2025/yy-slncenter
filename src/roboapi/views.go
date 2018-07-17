@@ -139,7 +139,6 @@ func (e *GinEnv) 	viewOfferSolution(c *gin.Context) {
 	}
 
 	err = robodb.OfferSolution(e.db, offerParams, c)
-
 	if err != nil {
 		log.Error("方案报价错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
@@ -260,5 +259,21 @@ func (e *GinEnv) viewAssignSolution(c *gin.Context)  {
 		apiResponse(c, RespFailed, nil, err.Error())
 	} else {
 		apiResponse(c, RespSuccess, nil, "")
+	}
+}
+
+// url: /log/:id
+func (e *GinEnv) viewGetLog(c *gin.Context) {
+	verifyRole := c.Query("role")
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	slnDetail, err := robodb.FetchLog(e.db, c)
+	if err != nil {
+		log.Error("获取操作记录细节错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, slnDetail, "")
 	}
 }

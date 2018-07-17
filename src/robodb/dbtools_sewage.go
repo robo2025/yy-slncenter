@@ -7,6 +7,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"roboutil"
+	"fmt"
 )
 
 // 准备写入或者更新用的方案数据
@@ -78,6 +79,17 @@ func prepareSewageData(params *SewageParams, uid int) *SewageParams {
 // 写入污水方案数据
 func writeSewageData(db *gorm.DB, params *SewageParams) error {
 	var err error
+	currentDate := time.Now()
+	userName := roboutil.HttpGet(params.UID)
+	Operator := fmt.Sprintf("客户(%s)", userName)
+	// 写入operation_log表
+	operationLog := &OperationLog{}
+	operationLog.SlnNo = params.SlnNo
+	operationLog.OperationType = "创建询价单"
+	operationLog.Operator = Operator
+	operationLog.Content = "创建污水处理方案询价单"
+	operationLog.AddTime = int(currentDate.Unix())
+	operationLog.OperatorId = params.UID
 
 	// 写入数据库
 	tx := db.Begin()
@@ -134,7 +146,12 @@ func writeSewageData(db *gorm.DB, params *SewageParams) error {
 			}
 		}
 	}
-
+	// 写入operation_log表
+	err = tx.Create(operationLog).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
 	return tx.Commit().Error
 }
 

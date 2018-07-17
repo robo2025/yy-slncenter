@@ -58,6 +58,7 @@ func writeAssignData(db *gorm.DB, params *AssignParams) error {
 	// 更新 sln_basic_info 表
 	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
 		AssignStatus: string(AssignStatusY),
+		SupplierID: params.SlnAssign.SupplierId,
 	})
 	if err != nil {
 		tx.Rollback()
@@ -73,3 +74,5 @@ func writeAssignData(db *gorm.DB, params *AssignParams) error {
 
 	return tx.Commit().Error
 }
+
+

@@ -82,9 +82,22 @@ type SlnBasicInfo struct {
 	SlnMsg        string  `json:"sln_msg"`
 }
 
+// sln_assign 表
 type SlnAssign struct {
 	ID         int    `json:"-"`
 	SlnNo      string `json:"sln_no"`
 	SupplierId int    `json:"supplier_id"`
 	AddTime    int    `json:"add_time"`
+}
+
+// operation_log
+type OperationLog struct {
+	ID            int    `json:"-"`
+	SlnNo         string `json:"sln_no"`
+	OperationType string `json:"operation_type"`
+	Operator      string `json:"operator"`
+	Content       string `json:"content"`
+	Remark        string `json:"remark"`
+	AddTime       int    `json:"add_time"`
+	OperatorId    int    `json:"operator_id"`
 }

@@ -28,3 +28,13 @@ func AssignSolution(db *gorm.DB, params *AssignParams, c *gin.Context) error {
 	dbParams := prepareAssignData(params)
 	return writeAssignData(db, dbParams)
 }
+// 获取操作记录
+func FetchLog(db *gorm.DB, c *gin.Context) ([]OperationLog, error) {
+	slnNo := c.Query("sln_no")
+
+	operationLog := []OperationLog{}
+	db.Order("-add_time").Where("sln_no = ?", slnNo).Find(&operationLog)
+
+	resp := operationLog
+	return resp,nil
+}

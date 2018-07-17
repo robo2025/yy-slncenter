@@ -8,6 +8,8 @@ import (
 	"strings"
 	"github.com/gin-gonic/gin"
 	"roboutil"
+	"fmt"
+	"strconv"
 )
 
 // InitDB 初始化数据库
@@ -165,6 +167,17 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 // 写入方案数据 writeSolutionData
 func writeWeldingData(db *gorm.DB, params *WeldingParams) error {
 	var err error
+	currentDate := time.Now()
+	userName := roboutil.HttpGet(params.UID)
+	Operator := fmt.Sprintf("客户(%s)", userName)
+	// 写入operation_log表
+	operationLog := &OperationLog{}
+	operationLog.SlnNo = params.SlnNo
+	operationLog.OperationType = "创建询价单"
+	operationLog.Operator = Operator
+	operationLog.Content = "创建焊接方案询价单"
+	operationLog.AddTime = int(currentDate.Unix())
+	operationLog.OperatorId = params.UID
 
 	// 写入数据库
 	tx := db.Begin()
@@ -220,6 +233,12 @@ func writeWeldingData(db *gorm.DB, params *WeldingParams) error {
 				return err
 			}
 		}
+	}
+	// 写入operation_log表
+	err = tx.Create(operationLog).Error
+	if err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	return tx.Commit().Error
@@ -313,7 +332,19 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	}
 	slnSupplierInfo := &SlnSupplierInfo{}
 	db.Where("sln_no = ?", params.SlnNo).First(slnSupplierInfo)
-
+	// 准备操作日志信息
+	currentDate := time.Now()
+	userName := roboutil.HttpGet(params.SlnSupplierInfo.UserID)
+	Operator := fmt.Sprintf("供应商(%s)", userName)
+	price:= strconv.FormatFloat(params.SlnSupplierInfo.TotalPrice,'f',2,64)
+	content := fmt.Sprintf("该方案询价单报价%s万元",price)
+	operationLog := &OperationLog{}
+	operationLog.SlnNo = params.SlnNo
+	operationLog.OperationType = "报价"
+	operationLog.Operator = Operator
+	operationLog.Content = content
+	operationLog.AddTime = int(currentDate.Unix())
+	operationLog.OperatorId = params.SlnSupplierInfo.UserID
 	// 写入数据库
 	tx := db.Begin()
 
@@ -328,18 +359,21 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 	}
 
 	// 更新 sln_basic_info 表
-	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
-		SlnStatus:     string(SlnStatusOffer),
-		SupplierID:    params.SlnSupplierInfo.UserID,
-		SupplierPrice: params.SlnSupplierInfo.TotalPrice,
-		AssignStatus:  string(AssignStatusY),
-		SupplierName:  roboutil.HttpGet(params.SlnSupplierInfo.UserID),
-		SpDate:        int(time.Now().Unix()), //报价日期
-	})
-	if err != nil {
-		tx.Rollback()
-		return err
+	if slnBasicInfo.SupplierID == params.SlnSupplierInfo.UserID {
+		tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
+			SlnStatus:     string(SlnStatusOffer),
+			SupplierID:    params.SlnSupplierInfo.UserID,
+			SupplierPrice: params.SlnSupplierInfo.TotalPrice,
+			AssignStatus:  string(AssignStatusY),
+			SupplierName:  roboutil.HttpGet(params.SlnSupplierInfo.UserID),
+			SpDate:        int(time.Now().Unix()), //报价日期
+		})
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
+
 
 	// 写入 sln_supplier_info 表
 	tx.Model(slnSupplierInfo).Updates(SlnSupplierInfo{
@@ -398,6 +432,12 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 				return err
 			}
 		}
+	}
+	// 写入operation_log表
+	err = tx.Create(operationLog).Error
+	if err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	return tx.Commit().Error

@@ -33,12 +33,12 @@ func FetchSewageDetail(db *gorm.DB, c *gin.Context) (*SewageDetailParams, error)
 
 	// 读取报价数据
 	resp.Supplier = nil
-	if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
-		supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
-		if err == nil {
-			resp.Supplier = supplier
-		}
+	//if customer.SlnBasicInfo.SlnStatus == string(SlnStatusPublish)
+	supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
+	if err == nil {
+		resp.Supplier = supplier
 	}
+	//}
 
 	return resp, nil
 }
@@ -48,4 +48,3 @@ func UpdateSewage(db *gorm.DB, params *SewageParams, c *gin.Context) error {
 	dbParams := prepareSewageData(params, uid)
 	return updateSewageData(db, dbParams)
 }
-
