@@ -56,7 +56,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		var DB *gorm.DB
 		DB = db.Order("-sln_date").Where("sln_no in (?) AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNOList, []string{"P", "M"}, s, e)
 		if slnNo != "" {
-			DB = DB.Where("sln_no = ?",slnNo)
+			DB = DB.Where("sln_no = ?", slnNo)
 		}
 		if isType != "" && isType != "all" {
 			DB = DB.Where("sln_status = ? ", strings.ToUpper(isType))
@@ -109,10 +109,10 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 			DB = DB.Where("assign_status = ?", assignStatus)
 		}
 		if spS != 0 {
-			DB = DB.Where("sp_date > (?)",spS)
+			DB = DB.Where("sp_date > (?)", spS)
 		}
 		if spE != 0 {
-			DB = DB.Where("sp_date < (?)",spE)
+			DB = DB.Where("sp_date < (?)", spE)
 		}
 
 		DB.Order("-sln_date").Find(&dbData)
@@ -153,11 +153,10 @@ func FetchWeldingDetail(db *gorm.DB, c *gin.Context) (*WeldingDetailParams, erro
 
 	// 读取报价数据
 	resp.Supplier = nil
-	if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
-		supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
-		if err == nil {
-			resp.Supplier = supplier
-		}
+	//if customer.SlnBasicInfo.SlnStatus == string(SlnStatusOffer) {
+	supplier, err = readOfferData(db, slnID, customer.SlnBasicInfo.SupplierID)
+	if err == nil {
+		resp.Supplier = supplier
 	}
 
 	return resp, nil
