@@ -101,3 +101,13 @@ type OperationLog struct {
 	AddTime       int    `json:"add_time"`
 	OperatorId    int    `json:"operator_id"`
 }
+type OfferOperation struct {
+	ID            int    `json:"-"`
+	SlnNo         string `json:"sln_no"`
+	SbmNo         int    `json:"sbm_no"`
+	Role          int    `json:"role"`
+	OperatingPart string `json:"operating_part"`
+	OperatingType string `json:"operating_type"`
+	Content       string `json:"content"`
+	AddTime       int    `json:"add_time"`
+}

@@ -32,5 +32,14 @@ const (
 )
 
 type AssignParams struct {
-	SlnAssign       *SlnAssign       `json:"sln_assign"`
+	SlnAssign *SlnAssign `json:"sln_assign"`
 }
+
+type UserType int
+
+const (   // todo 检查
+	TypicalUser  UserType = 1 // 普通用户
+	SupplierUser UserType = 2 //供应商
+	AdminUser    UserType = 3 // 运营
+	SuperUser    UserType = 4 // superuser
+)

@@ -69,7 +69,6 @@ func (e *GinEnv) viewWeldingDetail(c *gin.Context) {
 		return
 	}
 
-
 	slnDetail, err := robodb.FetchWeldingDetail(e.db, c)
 	if err != nil {
 		log.Error("获取方案细节错误!")
@@ -105,7 +104,7 @@ func (e *GinEnv) viewUpdateWelding(c *gin.Context) {
 }
 
 // post url: /offer/:id
-func (e *GinEnv) 	viewOfferSolution(c *gin.Context) {
+func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 	verifyRole := "supplier"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
@@ -188,7 +187,6 @@ func (e *GinEnv) viewSewageDetail(c *gin.Context) {
 		return
 	}
 
-
 	slnDetail, err := robodb.FetchSewageDetail(e.db, c)
 	if err != nil {
 		log.Error("获取方案细节错误!")
@@ -198,7 +196,7 @@ func (e *GinEnv) viewSewageDetail(c *gin.Context) {
 	}
 }
 
-func (e *GinEnv) viewUpdateSewage(c *gin.Context)  {
+func (e *GinEnv) viewUpdateSewage(c *gin.Context) {
 	verifyRole := "customer"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
@@ -239,7 +237,7 @@ func (e *GinEnv) viewDetail(c *gin.Context) {
 }
 
 // url: /assign/:id
-func (e *GinEnv) viewAssignSolution(c *gin.Context)  {
+func (e *GinEnv) viewAssignSolution(c *gin.Context) {
 	verifyRole := "admin"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
@@ -262,16 +260,32 @@ func (e *GinEnv) viewAssignSolution(c *gin.Context)  {
 	}
 }
 
-// url: /log/:id
+// url: /log?sln_no=sln_no
 func (e *GinEnv) viewGetLog(c *gin.Context) {
-	verifyRole := c.Query("role")
+	verifyRole := "admin"
 	if err := checkAuthRole(c, verifyRole); err != nil {
 		return
 	}
 
 	slnDetail, err := robodb.FetchLog(e.db, c)
 	if err != nil {
-		log.Error("获取操作记录细节错误!")
+		log.Error("获取操作记录时发生错误!")
+		apiResponse(c, RespNoData, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, slnDetail, "")
+	}
+}
+
+// url: offer-operation?sln_no=sln_no&sbm_no=sbm_no
+func (e *GinEnv) viewGetOfferOperation(c *gin.Context) {
+	verifyRole := "admin"
+	if err := checkAuthRole(c, verifyRole); err != nil {
+		return
+	}
+
+	slnDetail, err := robodb.FetchOfferOperation(e.db, c)
+	if err != nil {
+		log.Error("获取报价操作记录时发生错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
 	} else {
 		apiResponse(c, RespSuccess, slnDetail, "")

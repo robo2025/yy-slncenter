@@ -60,8 +60,8 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.PUT("/sewage/:id", env.viewUpdateSewage)
 
 	rg.GET("/sln/:id", env.viewDetail) //获取方案详情
-	rg.GET("/log",env.viewGetLog)		 //获取操作记录 log?gno=gno 获取
-
+	rg.GET("/log",env.viewGetLog)		 //获取操作记录 log?sln_no=sln_no 获取
+	rg.GET("/offer-operation/", env.viewGetOfferOperation)      //获取报价操作记录   offer-operation?sln_no=sln_no&sbm_no=sbm_no
 }
 
 func registerRPCView(rg *gin.RouterGroup, env *GinEnv) {

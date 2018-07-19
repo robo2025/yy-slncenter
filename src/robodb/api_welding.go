@@ -177,12 +177,7 @@ func UpdateWelding(db *gorm.DB, params *WeldingParams, c *gin.Context) error {
 	return updateWeldingData(db, dbParams)
 }
 
-// 方案报价
-func OfferSolution(db *gorm.DB, params *OfferParams, c *gin.Context) error {
-	uid := c.MustGet("uid").(int)
-	dbParams := prepareOfferData(params, uid)
-	return writeOfferData(db, dbParams)
-}
+
 
 // RPC 查询
 func FetchSolutionRPC(db *gorm.DB, params *SolutionRPCReqParams) (map[string]interface{}, error) {

@@ -13,11 +13,6 @@ type SewageParams struct {
 }
 
 // 污水方案细节页面
-
-//type SlnDetailMaster struct {
-//	Sewage *SewageDetailParams
-//	Welding *SolutionDetailParams
-//}
 type SewageDetailParams struct {
 	Customer *SewageParams `json:"customer"`
 	Supplier *OfferParams    `json:"supplier"`

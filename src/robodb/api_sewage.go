@@ -43,6 +43,7 @@ func FetchSewageDetail(db *gorm.DB, c *gin.Context) (*SewageDetailParams, error)
 	return resp, nil
 }
 
+//更新新污水方案
 func UpdateSewage(db *gorm.DB, params *SewageParams, c *gin.Context) error {
 	uid := c.MustGet("uid").(int)
 	dbParams := prepareSewageData(params, uid)
