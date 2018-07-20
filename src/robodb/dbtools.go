@@ -425,3 +425,28 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 
 	return tx.Commit().Error
 }
+
+// check all sln_status
+func CheckAllSlnStatus(db *gorm.DB) error {
+	slnBasicInfo := []SlnBasicInfo{}
+	db.Where("sln_status in (?)", []string{"S", "P", "M"}).Find(&slnBasicInfo)
+	for i := 0; i < len(slnBasicInfo); i++ {
+		// >>>当前时间大于SP状态的询价单发布日期90天即变为过期状态S
+		if slnBasicInfo[i].SlnStatus == "S" || slnBasicInfo[i].SlnStatus == "P" {
+			expireStamp := slnBasicInfo[i].SlnDate + 3600*24*90
+			if int(time.Now().Unix()) > expireStamp {
+				db.Model(&slnBasicInfo[i]).Update("sln_status",string(SlnStatusExpired))
+			}
+		// >>>当前时间大于M状态的询价单**报价**日期30天即变为过期状态S
+		}else if slnBasicInfo[i].SlnStatus == "M" {
+			expireStamp := slnBasicInfo[i].SpDate + 3600*24*30
+			if int(time.Now().Unix()) > expireStamp {
+				db.Model(&slnBasicInfo[i]).Update("sln_status",string(SlnStatusExpired))
+			}
+		}
+	}
+	return nil
+
+}
+
+

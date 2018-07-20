@@ -267,12 +267,12 @@ func (e *GinEnv) viewGetLog(c *gin.Context) {
 		return
 	}
 
-	slnDetail, err := robodb.FetchLog(e.db, c)
+	slnLog, err := robodb.FetchLog(e.db, c)
 	if err != nil {
 		log.Error("获取操作记录时发生错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
 	} else {
-		apiResponse(c, RespSuccess, slnDetail, "")
+		apiResponse(c, RespSuccess, slnLog, "")
 	}
 }
 
@@ -283,11 +283,23 @@ func (e *GinEnv) viewGetOfferOperation(c *gin.Context) {
 		return
 	}
 
-	slnDetail, err := robodb.FetchOfferOperation(e.db, c)
+	slnOfferOperation, err := robodb.FetchOfferOperation(e.db, c)
 	if err != nil {
 		log.Error("获取报价操作记录时发生错误!")
 		apiResponse(c, RespNoData, nil, err.Error())
 	} else {
-		apiResponse(c, RespSuccess, slnDetail, "")
+		apiResponse(c, RespSuccess, slnOfferOperation, "")
+	}
+}
+
+// url: /check
+func (e *GinEnv) viewCheckExpire(c *gin.Context)  {
+	err := robodb.CheckAllSlnStatus(e.db)
+
+	if err != nil {
+		log.Error("执行过期检查时,发生错误!")
+		apiResponse(c, RespFailed, nil, err.Error())
+	} else {
+		apiResponse(c, RespSuccess, nil, "询价单状态已检查")
 	}
 }

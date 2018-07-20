@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"fmt"
 )
+
 // 可获取多种方案详情
 func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
 	slnID := c.Param("id")
@@ -58,3 +59,4 @@ func FetchOfferOperation(db *gorm.DB, c *gin.Context) ([]OfferOperation, error) 
 	resp := offerOperation
 	return resp, nil
 }
+
