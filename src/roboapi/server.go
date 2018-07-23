@@ -59,6 +59,7 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 
 	rg.GET("/sln", env.viewSolutionList) //所有方案列表
 	rg.GET("/sln/:id", env.viewDetail) //获取方案详情
+	rg.GET("/common/sln/:id", env.viewDetail) //提供接口 获取方案详情
 
 	rg.GET("/log",env.viewGetLog)		 //获取操作记录 log?sln_no=sln_no 获取
 	rg.GET("/offer-operation/", env.viewGetOfferOperation)      //获取报价操作记录   offer-operation?sln_no=sln_no&sbm_no=sbm_no

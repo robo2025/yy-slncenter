@@ -260,7 +260,7 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 			offerOperation = append(offerOperation, operation)
 		}
 	}
-	constantDevice := []SlnDevice{} // 添加未删除的原询价单设备,检查有没有修改属性
+	constantDevice := []SlnDevice{} // 添加未删除的原询价单设备,检查有没有修改单价,数量
 	for i := 0; i < len(oldSlnDevice); i++ {
 		v, ok := newMap[oldSlnDevice[i].DeviceID]
 		if !ok {

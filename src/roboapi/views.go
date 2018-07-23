@@ -222,9 +222,11 @@ func (e *GinEnv) viewUpdateSewage(c *gin.Context) {
 
 // url: /sln/:id
 func (e *GinEnv) viewDetail(c *gin.Context) {
-	verifyRole := c.Query("role")
-	if err := checkAuthRole(c, verifyRole); err != nil {
-		return
+	if string(c.Request.URL.Path[3:10]) != "/common" {
+		verifyRole := c.Query("role")
+		if err := checkAuthRole(c, verifyRole); err != nil {
+			return
+		}
 	}
 
 	slnDetail, err := robodb.FetchDetail(e.db, c)
@@ -293,7 +295,7 @@ func (e *GinEnv) viewGetOfferOperation(c *gin.Context) {
 }
 
 // url: /check
-func (e *GinEnv) viewCheckExpire(c *gin.Context)  {
+func (e *GinEnv) viewCheckExpire(c *gin.Context) {
 	err := robodb.CheckAllSlnStatus(e.db)
 
 	if err != nil {
