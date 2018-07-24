@@ -64,7 +64,7 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.GET("/log",env.viewGetLog)		 //获取操作记录 log?sln_no=sln_no 获取
 	rg.GET("/offer-operation/", env.viewGetOfferOperation)      //获取报价操作记录   offer-operation?sln_no=sln_no&sbm_no=sbm_no
 
-	rg.GET("/check",env.viewCheckExpire)   // 询价单过期时间检查
+	rg.GET("/checking",env.viewCheckExpire)   // 询价单过期时间检查
 }
 
 func registerRPCView(rg *gin.RouterGroup, env *GinEnv) {

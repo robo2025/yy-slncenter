@@ -22,6 +22,7 @@ type SlnSupplierInfo struct {
 	DeliveryDate int     `json:"delivery_date"`
 	SlnDesc      string  `json:"sln_desc"`
 	SlnNote      string  `json:"sln_note"`
+	OperatorId   int     `json:"operator_id"`
 }
 
 // sln_device 表 sln_device表
@@ -105,7 +106,8 @@ type OfferOperation struct {
 	ID            int    `json:"-"`
 	SlnNo         string `json:"sln_no"`
 	SbmNo         int    `json:"sbm_no"`
-	Role          int    `json:"role"`
+	Operator      string `json:"operator"`
+	OperatorId    int    `json:"operator_id"`
 	OperatingPart string `json:"operating_part"`
 	OperatingType string `json:"operating_type"`
 	Content       string `json:"content"`

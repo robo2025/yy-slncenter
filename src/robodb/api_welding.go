@@ -13,12 +13,16 @@ import (
 // 获取方案列表
 func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	uid := c.MustGet("uid").(int)
+	isSubuser := c.MustGet("is_subuser").(int)
+	if isSubuser == 1 {
+		uid = c.MustGet("main_user_id").(int)
+	}
 	role := c.MustGet("role").(int)
 	isType := c.Query("is_type") // sln_status 报价状态
 	slnNo := c.Query("sln_no")
 	slnName := c.Query("sln_name")
 
-	customerName := c.Query("customer_name") //""
+	customerName := c.Query("customer_name")
 	supplierName := c.Query("supplier_name")
 	assignStatus := c.Query("assign_status") //指派状态
 	spStart := c.Query("sp_start")           //sp_date 报价开始时间
@@ -61,23 +65,7 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		if isType != "" && isType != "all" {
 			DB = DB.Where("sln_status = ? ", strings.ToUpper(isType))
 		}
-		//else if isType == "all" {
-		//	//db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", uid, []string{"P", "M"}, s, e).Find(&dbData)
-		//	db.Order("-sln_date").Where("sln_no in (?) And sln_date > (?) And sln_date < (?) ", slnNOList, s, e).Find(&dbData)
-		//} else {
-		//	db.Order("-sln_date").Where("sln_no in (?) And sln_date > (?) And sln_date < (?) ", slnNOList, s, e).Find(&dbData)
-		//}
 		DB.Find(&dbData)
-
-		dbdataLen = strconv.Itoa(len(dbData))
-		if len(dbData) > offset+limit {
-			dbData = dbData[offset : offset+limit]
-			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+limit)
-		} else {
-			dbData = dbData[offset:]
-			dbdataRange = fmt.Sprintf("%d-%d", offset, len(dbData))
-		}
-
 	case 3, 4: // admin
 		//db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M", "E"}, ).Find(&dbData)
 		//if slnNo != "" {
@@ -116,18 +104,28 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		}
 
 		DB.Order("-sln_date").Find(&dbData)
-		//}
-
-		dbdataLen = strconv.Itoa(len(dbData))
-		if len(dbData) > offset+limit {
-			dbData = dbData[offset : offset+limit]
-			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+limit)
-		} else {
-			dbData = dbData[offset:]
-			dbdataRange = fmt.Sprintf("%d-%d", offset, offset+len(dbData))
-		}
-
 	}
+
+	dbdataLen = strconv.Itoa(len(dbData))
+	if len(dbData) > offset+limit {
+		dbData = dbData[offset : offset+limit]
+		dbdataRange = fmt.Sprintf("%d-%d", offset, offset+limit)
+	} else {
+		dbData = dbData[offset:]
+		dbdataRange = fmt.Sprintf("%d-%d", offset, len(dbData))
+	}
+	var userIDS []int	// 获取userid列表 去重生成字典,CustomerName,SupplierName
+	for i:=0;i<len(dbData);i++ {
+		userIDS = append(userIDS, dbData[i].CustomerID)
+		userIDS = append(userIDS, dbData[i].SupplierID)
+	}
+	userIDS = roboutil.LikeSetFromPy(userIDS)
+	userMap := roboutil.HttpGetNames(userIDS)
+	for i:=0;i<len(dbData);i++ {
+		dbData[i].CustomerName = userMap[strconv.Itoa(dbData[i].CustomerID)]
+		dbData[i].SupplierName = userMap[strconv.Itoa(dbData[i].SupplierID)]
+	}
+	// 设置header
 	c.Header("Access-Control-Expose-Headers", "x-content-total,x-content-range,Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
 	c.Writer.Header().Add("x-content-total", dbdataLen)
 	c.Writer.Header().Add("x-content-range", dbdataRange)

@@ -62,7 +62,7 @@ func writeAssignData(db *gorm.DB, params *AssignParams) error {
 	// 更新 sln_basic_info 表
 	tx.Model(slnBasicInfo).Updates(SlnBasicInfo{
 		AssignStatus: string(AssignStatusY),
-		SupplierID: params.SlnAssign.SupplierId,
+		SupplierID:   params.SlnAssign.SupplierId,
 	})
 	if err != nil {
 		tx.Rollback()
@@ -78,7 +78,6 @@ func writeAssignData(db *gorm.DB, params *AssignParams) error {
 
 	return tx.Commit().Error
 }
-
 
 // 查询供应商报价细节
 func readOfferData(db *gorm.DB, slnID string, uid int) (*OfferParams, error) {
@@ -111,10 +110,9 @@ func readOfferData(db *gorm.DB, slnID string, uid int) (*OfferParams, error) {
 }
 
 // 准备方案报价数据
-func prepareOfferData(params *OfferParams, uid int) *OfferParams {
-	// 准备数据
+func prepareOfferData(params *OfferParams, uid int, mainUserId int) *OfferParams {
+	// 准备数据  uid是操作者(登陆的id) main_user_id主账户
 	slnNo := strings.TrimSpace(params.SlnNo)
-
 	params.UID = uid
 
 	// sln_supplier_info
@@ -122,8 +120,9 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	currentDate := time.Now()
 	if slnSupplierInfo != nil {
 		slnSupplierInfo.SlnNo = slnNo
-		slnSupplierInfo.UserID = uid
+		slnSupplierInfo.UserID = mainUserId
 		slnSupplierInfo.ExpiredDate = int(currentDate.AddDate(0, 0, 30).Unix())
+		slnSupplierInfo.OperatorId = uid
 
 	}
 
@@ -132,7 +131,8 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	if len(params.SlnDevice) != 0 {
 		for _, el := range params.SlnDevice {
 			el.SlnNo = slnNo
-			el.UserID = uid
+			el.UserID = mainUserId
+			//el.UserID = uid
 			el.SlnRole = "S"
 			slnDevice = append(slnDevice, el)
 		}
@@ -143,7 +143,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	if len(params.SlnSupport) != 0 {
 		for _, el := range params.SlnSupport {
 			el.SlnNo = slnNo
-			el.UserID = uid
+			el.UserID = mainUserId
 			slnSupport = append(slnSupport, el)
 		}
 	}
@@ -153,7 +153,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	if len(params.WeldingTechParam) != 0 {
 		for _, el := range params.WeldingTechParam {
 			el.SlnNo = slnNo
-			el.UserID = uid
+			el.UserID = mainUserId
 			weldingTechParam = append(weldingTechParam, el)
 		}
 	}
@@ -163,7 +163,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	if len(params.SlnFile) != 0 {
 		for _, el := range params.SlnFile {
 			el.SlnNo = slnNo
-			el.UserID = uid
+			el.UserID = mainUserId
 			el.SlnRole = "C"
 			slnFile = append(slnFile, el)
 		}
@@ -172,7 +172,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 	// 返回组合数据
 	resp := &OfferParams{
 		SlnNo:            slnNo,
-		UID:              uid,
+		UID:              mainUserId,
 		SlnSupplierInfo:  slnSupplierInfo,
 		SlnDevice:        slnDevice,
 		SlnSupport:       slnSupport,
@@ -183,7 +183,7 @@ func prepareOfferData(params *OfferParams, uid int) *OfferParams {
 }
 
 // 写入报价方案数据   todo 创建时,指派状态默认为 未指派 (W)   Y
-func writeOfferData(db *gorm.DB, params *OfferParams) error {
+func writeOfferData(db *gorm.DB, params *OfferParams, uid int) error {
 	var err error
 	var sbmNo int
 
@@ -231,11 +231,11 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 			operation := OfferOperation{
 				SlnNo:         params.SlnNo,
 				SbmNo:         sbmNo,
-				Role:          int(SupplierUser),
+				OperatorId:    uid,
 				OperatingPart: newSlnDevice[i].DeviceType,
 				OperatingType: "添加",
-				Content: fmt.Sprintf("添加 组成部分:%s;产品名称:%s;型号: %s;品牌: %s;单价: %s;数量: %d;", newSlnDevice[i].DeviceComponent, newSlnDevice[i].DeviceName, newSlnDevice[i].DeviceModel, newSlnDevice[i].BrandName, price, newSlnDevice[i].DeviceNum),
-				AddTime: int(time.Now().Unix()),
+				Content:       fmt.Sprintf("添加 组成部分:%s;产品名称:%s;型号: %s;品牌: %s;单价: %s;数量: %d;", newSlnDevice[i].DeviceComponent, newSlnDevice[i].DeviceName, newSlnDevice[i].DeviceModel, newSlnDevice[i].BrandName, price, newSlnDevice[i].DeviceNum),
+				AddTime:       int(time.Now().Unix()),
 			}
 			offerOperation = append(offerOperation, operation)
 		}
@@ -250,7 +250,7 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 			operation := OfferOperation{
 				SlnNo:         params.SlnNo,
 				SbmNo:         sbmNo,
-				Role:          int(SupplierUser),
+				OperatorId:    uid,
 				OperatingPart: newSlnDevice[i].DeviceType,
 				OperatingType: "添加",
 				Content: fmt.Sprintf("添加 组成部分：%s;产品名称：%s;型号: %s;品牌: %s;单价:%s;数量: %d", newSlnDevice[i].DeviceComponent, newSlnDevice[i].DeviceName,
@@ -268,7 +268,7 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 			operation := OfferOperation{
 				SlnNo:         params.SlnNo,
 				SbmNo:         sbmNo,
-				Role:          int(SupplierUser),
+				OperatorId:    uid,
 				OperatingPart: oldSlnDevice[i].DeviceType,
 				OperatingType: "删除",
 				Content: fmt.Sprintf("删除 组成部分：%s;产品名称：%s;型号: %s;品牌: %s;单价: %s;数量: %d;", oldSlnDevice[i].DeviceComponent, oldSlnDevice[i].DeviceName,
@@ -281,15 +281,15 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 		}
 	}
 	//比较没有添加和删除的设备,属性价格和数量有无变化
-	for i:=0;i<len(constantDevice);i++ {
-		for k:=0;k<len(oldSlnDevice);k++{
-			if constantDevice[i].DeviceID == oldSlnDevice[k].DeviceID{
-				if constantDevice[i].DeviceNum !=oldSlnDevice[k].DeviceNum || constantDevice[i].DevicePrice !=oldSlnDevice[k].DevicePrice{
+	for i := 0; i < len(constantDevice); i++ {
+		for k := 0; k < len(oldSlnDevice); k++ {
+			if constantDevice[i].DeviceID == oldSlnDevice[k].DeviceID {
+				if constantDevice[i].DeviceNum != oldSlnDevice[k].DeviceNum || constantDevice[i].DevicePrice != oldSlnDevice[k].DevicePrice {
 					price := strconv.FormatFloat(constantDevice[k].DevicePrice, 'f', 2, 64)
 					operation := OfferOperation{
 						SlnNo:         params.SlnNo,
 						SbmNo:         sbmNo,
-						Role:          int(SupplierUser),
+						OperatorId:    uid,
 						OperatingPart: oldSlnDevice[i].DeviceType,
 						OperatingType: "修改",
 						Content: fmt.Sprintf("修改 组成部分：%s;产品名称：%s;型号: %s;品牌: %s;单价: %s;数量: %d;", oldSlnDevice[i].DeviceComponent, oldSlnDevice[i].DeviceName,
@@ -309,7 +309,7 @@ func writeOfferData(db *gorm.DB, params *OfferParams) error {
 		operation := OfferOperation{
 			SlnNo:         params.SlnNo,
 			SbmNo:         sbmNo,
-			Role:          int(SupplierUser),
+			OperatorId:    uid,
 			OperatingPart: "技术支持",
 			OperatingType: "选择",
 			Content:       fmt.Sprintf("选择 项目名称：%s；输入价格：%s", params.SlnSupport[i].Name, price),
@@ -433,20 +433,18 @@ func CheckAllSlnStatus(db *gorm.DB) error {
 	for i := 0; i < len(slnBasicInfo); i++ {
 		// >>>当前时间大于SP状态的询价单发布日期90天即变为过期状态S
 		if slnBasicInfo[i].SlnStatus == "S" || slnBasicInfo[i].SlnStatus == "P" {
-			expireStamp := slnBasicInfo[i].SlnDate + 3600*24*90
+			expireStamp := slnBasicInfo[i].SlnExpired
 			if int(time.Now().Unix()) > expireStamp {
-				db.Model(&slnBasicInfo[i]).Update("sln_status",string(SlnStatusExpired))
+				db.Model(&slnBasicInfo[i]).Update("sln_status", string(SlnStatusExpired))
 			}
-		// >>>当前时间大于M状态的询价单**报价**日期30天即变为过期状态S
-		}else if slnBasicInfo[i].SlnStatus == "M" {
+			// >>>当前时间大于M状态的询价单**报价**日期30天即变为过期状态S
+		} else if slnBasicInfo[i].SlnStatus == "M" {
 			expireStamp := slnBasicInfo[i].SpDate + 3600*24*30
 			if int(time.Now().Unix()) > expireStamp {
-				db.Model(&slnBasicInfo[i]).Update("sln_status",string(SlnStatusExpired))
+				db.Model(&slnBasicInfo[i]).Update("sln_status", string(SlnStatusExpired))
 			}
 		}
 	}
 	return nil
 
 }
-
-

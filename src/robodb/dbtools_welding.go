@@ -254,12 +254,15 @@ func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*WeldingParams
 
 	uid := c.MustGet("uid").(int)
 	role := c.MustGet("role").(int)
+
 	switch role {
 	case 1: // customer
 		db.Where("sln_no = ? AND customer_id = ?", slnID, uid).First(slnBasicInfo)
 	case 2, 3, 4: // supplier, admin, super
 		db.Where("sln_no = ?", slnID).First(slnBasicInfo)
 	}
+	slnBasicInfo.CustomerName = roboutil.HttpGet(slnBasicInfo.CustomerID)
+	slnBasicInfo.SupplierName = roboutil.HttpGet(slnBasicInfo.SupplierID)
 
 	if slnBasicInfo.ID == 0 {
 		return nil, errors.New("找不到相应方案")

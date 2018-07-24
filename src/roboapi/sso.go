@@ -15,12 +15,16 @@ type SSOJson struct {
 
 // SSO User struct
 type SSOUser struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Mobile   string `json:"mobile"`
-	UserType int    `json:"user_type"`
+	ID         int    `json:"id"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Mobile     string `json:"mobile"`
+	UserType   int    `json:"user_type"`
+	IsSubuser  int    `json:"is_subuser"`
+	MainUserId int    `json:"main_user_id"`
 }
+
+//SSO
 
 // Gin 中间件，用户检查 Authorization
 func SSOAuth() gin.HandlerFunc {
@@ -45,6 +49,9 @@ func SSOAuth() gin.HandlerFunc {
 		c.Set("isAuth", true)
 		c.Set("uid", ssoUser.ID)
 		c.Set("role", ssoUser.UserType)
+		c.Set("is_subuser", ssoUser.IsSubuser)
+		c.Set("main_user_id", ssoUser.MainUserId)
+
 	}
 }
 

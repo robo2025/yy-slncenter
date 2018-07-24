@@ -3,7 +3,9 @@ package robodb
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/gin-gonic/gin"
+	"roboutil"
 	"fmt"
+	"strconv"
 )
 
 // 可获取多种方案详情
@@ -13,12 +15,9 @@ func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
 	db.Where("sln_no = ?", slnID).First(basicInfo)
 	if basicInfo.SlnType == "welding" {
 		resp, _ := FetchWeldingDetail(db, c)
-
 		return resp, nil
 	} else if basicInfo.SlnType == "sewage" {
 		resp, _ := FetchSewageDetail(db, c)
-		fmt.Println(resp)
-		fmt.Println(resp.Customer.SewageInfo)
 		return resp, nil
 	}
 	return nil, nil
@@ -27,8 +26,9 @@ func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
 // 方案报价
 func OfferSolution(db *gorm.DB, params *OfferParams, c *gin.Context) error {
 	uid := c.MustGet("uid").(int)
-	dbParams := prepareOfferData(params, uid)
-	return writeOfferData(db, dbParams)
+	mainUserId := c.MustGet("main_user_id").(int)
+	dbParams := prepareOfferData(params, uid, mainUserId)
+	return writeOfferData(db, dbParams, uid)
 }
 
 // 方案指派
@@ -43,7 +43,12 @@ func FetchLog(db *gorm.DB, c *gin.Context) ([]OperationLog, error) {
 
 	operationLog := []OperationLog{}
 	db.Order("-add_time").Where("sln_no = ?", slnNo).Find(&operationLog)
-
+	//var userIds []int
+	//for i:=0;i<len(operationLog);i++ {
+	//	userIds = append(userIds, operationLog[i].OperatorId)
+	//}
+	//userMap := roboutil.HttpGetNames(userIds)
+	//fmt.Println(userMap,userMap[strconv.Itoa(28)])
 	resp := operationLog
 	return resp, nil
 }
@@ -55,8 +60,15 @@ func FetchOfferOperation(db *gorm.DB, c *gin.Context) ([]OfferOperation, error) 
 
 	offerOperation := []OfferOperation{}
 	db.Order("add_time").Where("sln_no = ? And sbm_no = ?", slnNo, sbmNo).Find(&offerOperation)
-
+	var userIds []int
+	for i:=0;i<len(offerOperation);i++ {
+		userIds = append(userIds, offerOperation[i].OperatorId)
+	}
+	userMap := roboutil.HttpGetNames(userIds)
+	fmt.Println(userMap, userMap[strconv.Itoa(offerOperation[1].OperatorId)])
+	for i:=0;i<len(offerOperation);i++ {
+		offerOperation[i].Operator = fmt.Sprintf("供应商(%s)",userMap[strconv.Itoa(offerOperation[i].OperatorId)])
+	}
 	resp := offerOperation
 	return resp, nil
 }
-
