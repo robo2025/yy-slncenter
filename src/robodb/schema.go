@@ -14,7 +14,7 @@ type SlnSupport struct {
 type SlnSupplierInfo struct {
 	ID           int     `json:"-"`
 	SlnNo        string  `json:"sln_no"`
-	UserID       int     `json:"user_id"`
+	UserID       int     `json:"user_id"` // 报价的公司账号ID sp1 查询用
 	TotalPrice   float64 `json:"total_price"`
 	FreightPrice float64 `json:"freight_price"`
 	PayRatio     int     `json:"pay_ratio"`
@@ -22,7 +22,7 @@ type SlnSupplierInfo struct {
 	DeliveryDate int     `json:"delivery_date"`
 	SlnDesc      string  `json:"sln_desc"`
 	SlnNote      string  `json:"sln_note"`
-	OperatorId   int     `json:"operator_id"`
+	OperatorId   int     `json:"operator_id"` // 报价的账号 精确到子账号
 }
 
 // sln_device 表 sln_device表
@@ -72,10 +72,10 @@ type SlnBasicInfo struct {
 	SlnDate       int     `json:"sln_date"`
 	SlnExpired    int     `json:"sln_expired"`
 	CustomerID    int     `json:"customer_id"`
-	CustomerName  string  `json:"customer_name"` //
+	CustomerName  string  `json:"customer_name"`
 	CustomerPrice float64 `json:"customer_price"`
 	SupplierID    int     `json:"supplier_id"`
-	SupplierName  string  `json:"supplier_name"` //
+	SupplierName  string  `json:"supplier_name"`
 	SupplierPrice float64 `json:"supplier_price"`
 	SlnStatus     string  `json:"sln_status"`
 	SpDate        int     `json:"sp_date"`       //报价时间

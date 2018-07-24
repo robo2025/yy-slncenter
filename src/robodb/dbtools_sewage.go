@@ -25,7 +25,6 @@ func prepareSewageData(params *SewageParams, uid int) *SewageParams {
 		slnBasicInfo.CustomerID = uid
 		slnBasicInfo.SlnDate = int(currentDate.Unix())
 		slnBasicInfo.SlnExpired = int(currentDate.AddDate(0, 0, 90).Unix())
-		slnBasicInfo.CustomerName = roboutil.HttpGet(uid)
 		slnBasicInfo.AssignStatus = string(AssignStatusW)
 	}
 
