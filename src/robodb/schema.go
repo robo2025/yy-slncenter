@@ -72,10 +72,10 @@ type SlnBasicInfo struct {
 	SlnDate       int     `json:"sln_date"`
 	SlnExpired    int     `json:"sln_expired"`
 	CustomerID    int     `json:"customer_id"`
-	CustomerName  string  `json:"customer_name"`
+	CustomerName  string  `gorm:"-"json:"customer_name"`
 	CustomerPrice float64 `json:"customer_price"`
 	SupplierID    int     `json:"supplier_id"`
-	SupplierName  string  `json:"supplier_name"`
+	SupplierName  string  `gorm:"-"json:"supplier_name"`
 	SupplierPrice float64 `json:"supplier_price"`
 	SlnStatus     string  `json:"sln_status"`
 	SpDate        int     `json:"sp_date"`       //报价时间

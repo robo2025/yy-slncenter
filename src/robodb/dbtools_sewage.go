@@ -180,6 +180,7 @@ func readSewageData(db *gorm.DB, slnID string, c *gin.Context) (*SewageParams, e
 	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnDevice)
 	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnFile)
 
+	slnBasicInfo.CustomerName = roboutil.HttpGet(slnBasicInfo.CustomerID)
 	resp := &SewageParams{
 		SlnNo:        slnID,
 		SlnBasicInfo: slnBasicInfo,
