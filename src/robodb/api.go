@@ -43,12 +43,7 @@ func FetchLog(db *gorm.DB, c *gin.Context) ([]OperationLog, error) {
 
 	operationLog := []OperationLog{}
 	db.Order("-add_time").Where("sln_no = ?", slnNo).Find(&operationLog)
-	//var userIds []int
-	//for i:=0;i<len(operationLog);i++ {
-	//	userIds = append(userIds, operationLog[i].OperatorId)
-	//}
-	//userMap := roboutil.HttpGetNames(userIds)
-	//fmt.Println(userMap,userMap[strconv.Itoa(28)])
+
 	resp := operationLog
 	return resp, nil
 }
@@ -60,12 +55,12 @@ func FetchOfferOperation(db *gorm.DB, c *gin.Context) ([]OfferOperation, error) 
 
 	offerOperation := []OfferOperation{}
 	db.Order("add_time").Where("sln_no = ? And sbm_no = ?", slnNo, sbmNo).Find(&offerOperation)
-	var userIds []int
+	var userIds []int	// operator赋值
 	for i:=0;i<len(offerOperation);i++ {
 		userIds = append(userIds, offerOperation[i].OperatorId)
 	}
 	userMap := roboutil.HttpGetNames(userIds)
-	fmt.Println(userMap, userMap[strconv.Itoa(offerOperation[1].OperatorId)])
+
 	for i:=0;i<len(offerOperation);i++ {
 		offerOperation[i].Operator = fmt.Sprintf("供应商(%s)",userMap[strconv.Itoa(offerOperation[i].OperatorId)])
 	}
