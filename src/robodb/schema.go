@@ -106,7 +106,7 @@ type OfferOperation struct {
 	ID            int    `json:"-"`
 	SlnNo         string `json:"sln_no"`
 	SbmNo         int    `json:"sbm_no"`
-	Operator      string `json:"operator"`
+	Operator      string `gorm:"-"json:"operator"`
 	OperatorId    int    `json:"operator_id"`
 	OperatingPart string `json:"operating_part"`
 	OperatingType string `json:"operating_type"`
