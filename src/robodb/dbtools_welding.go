@@ -273,6 +273,7 @@ func readSolutionData(db *gorm.DB, slnID string, c *gin.Context) (*WeldingParams
 	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnDevice)
 	db.Where("sln_no = ? AND user_id = ?", slnID, customerID).Find(&slnFile)
 
+	slnBasicInfo.CustomerName = roboutil.HttpGet(slnBasicInfo.CustomerID)
 	resp := &WeldingParams{
 		SlnNo:        slnID,
 		SlnBasicInfo: slnBasicInfo,
