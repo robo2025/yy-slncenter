@@ -39,7 +39,6 @@ func prepareWeldingData(params *WeldingParams, uid int) *WeldingParams {
 		slnBasicInfo.CustomerID = uid
 		slnBasicInfo.SlnDate = int(currentDate.Unix())
 		slnBasicInfo.SlnExpired = int(currentDate.AddDate(0, 0, 90).Unix())
-		slnBasicInfo.CustomerName = roboutil.HttpGet(uid)
 		slnBasicInfo.AssignStatus = string(AssignStatusW)
 
 	}
