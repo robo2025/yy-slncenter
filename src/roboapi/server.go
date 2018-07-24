@@ -50,11 +50,11 @@ func registerApiView(rg *gin.RouterGroup, env *GinEnv) {
 	rg.PUT("/assign", env.viewAssignSolution)    //指派
 
 	rg.POST("/welding", env.viewCreateWelding) //welding 是焊接方案
-	//rg.GET("/welding/:id", env.viewWeldingDetail)  // 暂时废弃,使用sln/id获取
+	rg.GET("/welding/:id", env.viewDetail)  // 暂时废弃,使用sln/id获取
 	rg.PUT("/welding/:id", env.viewUpdateWelding)
 
 	rg.POST("/sewage", env.viewCreateSewage) // sewage 是污水
-	//rg.GET("/sewage/:id", env.viewSewageDetail)  // 暂时废弃,使用sln/id获取
+	rg.GET("/sewage/:id", env.viewDetail)  // 暂时废弃,使用sln/id获取
 	rg.PUT("/sewage/:id", env.viewUpdateSewage)
 
 	rg.GET("/sln", env.viewSolutionList) //所有方案列表
