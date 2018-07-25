@@ -88,10 +88,22 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		//	DB = DB.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
 		//}
 		if customerName != "" {
-			DB = DB.Where("customer_name = ?", customerName)
+			userInfos := roboutil.HttpGetId(customerName)
+			for i:=0;i<len(userInfos);i++ {
+				if userInfos[i]["username"] == customerName{
+					customerId := userInfos[i]["id"]
+					DB = DB.Where("customer_id = ?", customerId)
+				}
+			}
 		}
 		if supplierName != "" {
-			DB = DB.Where("supplier_name = ?", supplierName)
+			userInfos := roboutil.HttpGetId(customerName)
+			for i:=0;i<len(userInfos);i++ {
+				if userInfos[i]["username"] == customerName{
+					supplierId := userInfos[i]["id"]
+					DB = DB.Where("supplier_id = ?", supplierId)
+				}
+			}
 		}
 		if assignStatus != "" && assignStatus != "all" {
 			DB = DB.Where("assign_status = ?", assignStatus)

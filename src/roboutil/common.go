@@ -20,10 +20,16 @@ type UsersInfo struct {
 	Msg     string            `json:"msg"`
 }
 
-func TimeToStamp(startTime,endTime string) (s,e int) {
+type AllUsersInfo struct {
+	Rescode string              `json:"rescode"`
+	Data    []map[string]string `json:"data"`
+	Msg     string              `json:"msg"`
+}
+
+func TimeToStamp(startTime, endTime string) (s, e int) {
 	if startTime == "" && endTime == "" {
 		e = int(time.Now().Unix())
-		return s,e
+		return s, e
 	}
 	startTime += " 00:00:00"
 	endTime += " 23:59:59"
@@ -34,14 +40,14 @@ func TimeToStamp(startTime,endTime string) (s,e int) {
 	ee, _ := time.Parse("2006-01-02 15:04:05", endTime)
 	e = int(ee.Unix())
 
-	if s > e{
-		return e,s
+	if s > e {
+		return e, s
 	}
-	return s,e
+	return s, e
 }
-func TimeToStamp2(startTime,endTime string) (s,e int) {
+func TimeToStamp2(startTime, endTime string) (s, e int) {
 	if startTime == "" && endTime == "" {
-		return s,e
+		return s, e
 	}
 	startTime += " 00:00:00"
 	endTime += " 23:59:59"
@@ -52,14 +58,15 @@ func TimeToStamp2(startTime,endTime string) (s,e int) {
 	ee, _ := time.Parse("2006-01-02 15:04:05", endTime)
 	e = int(ee.Unix())
 
-	if s > e{
-		return e,s
+	if s > e {
+		return e, s
 	}
-	return s,e
+	return s, e
 }
+
 //   获取(用户名)单个
 func HttpGet(UID int) string {
-	url :=fmt.Sprintf("https://testapi.robo2025.com/user/service/usernames/%d" ,UID)
+	url := fmt.Sprintf("https://testapi.robo2025.com/user/service/usernames/%d", UID)
 	resp, err := http.Get(url)
 	if err != nil {
 	}
@@ -88,7 +95,7 @@ func HttpGetNames(UIDs []int) map[string]string {
 	if err != nil {
 	}
 	users := new(UsersInfo)
-	err = json.Unmarshal(body,users)
+	err = json.Unmarshal(body, users)
 
 	return users.Data
 }
@@ -97,12 +104,30 @@ func HttpGetNames(UIDs []int) map[string]string {
 func LikeSetFromPy(slc []int) []int {
 	result := []int{}
 	tempMap := map[int]byte{}
-	for _, e := range slc{
+	for _, e := range slc {
 		l := len(tempMap)
 		tempMap[e] = 0
-		if len(tempMap) != l{
+		if len(tempMap) != l {
 			result = append(result, e)
 		}
 	}
 	return result
+}
+
+// 根据名字获取ID https://testapi.robo2025.com/user/service/username/all
+func HttpGetId(name string) []map[string]string {
+	url := "https://testapi.robo2025.com/user/service/username/all?"
+	url += fmt.Sprintf("username=%s&", name)
+
+	resp, err := http.Get(url)
+	if err != nil {
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body) //请求数据进行读取
+	if err != nil {
+	}
+	users := new(AllUsersInfo)
+	err = json.Unmarshal(body, users)
+
+	return users.Data
 }
