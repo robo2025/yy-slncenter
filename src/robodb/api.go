@@ -19,8 +19,12 @@ func FetchDetail(db *gorm.DB, c *gin.Context) (interface{}, error) {
 	} else if basicInfo.SlnType == "sewage" {
 		resp, _ := FetchSewageDetail(db, c)
 		return resp, nil
+	}else {
+		err := errors.New("获取详情时发生错误")
+		return nil,err
 	}
-	return nil, nil
+	errs := errors.New("获取详情时发生错误")
+	return nil, errs
 }
 
 // 方案报价
