@@ -17,10 +17,10 @@ func (e *GinEnv) viewIndex(c *gin.Context) {
 
 // url: /sln
 func (e *GinEnv) viewSolutionList(c *gin.Context) {
-	verifyRole := c.Query("role")
-	if err := checkAuthRole(c, verifyRole); err != nil {
-		return
-	}
+	//verifyRole := c.Query("role")
+	//if err := checkAuthRole(c, verifyRole); err != nil {
+	//	return
+	//}
 
 	slnList, err := robodb.FetchSolutionList(e.db, c)
 	if err != nil {

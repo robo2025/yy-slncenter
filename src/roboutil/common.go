@@ -21,32 +21,32 @@ type UsersInfo struct {
 }
 
 type AllUsersInfo struct {
-	Rescode string              `json:"rescode"`
-	Data    []map[string]string `json:"data"`
-	Msg     string              `json:"msg"`
+	Rescode string                   `json:"rescode"`
+	Data    []map[string]interface{} `json:"data"`
+	Msg     string                   `json:"msg"`
 }
 
-func TimeToStamp(startTime, endTime string) (s, e int) {
-	if startTime == "" && endTime == "" {
-		e = int(time.Now().Unix())
-		return s, e
+func StartTimeToStamp(startTime string) int {
+	if startTime == "" {
+		return 0
 	}
 	startTime += " 00:00:00"
-	endTime += " 23:59:59"
-
-	ss, _ := time.Parse("2006-01-02 15:04:05", startTime)
-	s = int(ss.Unix())
-
-	ee, _ := time.Parse("2006-01-02 15:04:05", endTime)
-	e = int(ee.Unix())
-
-	if s > e {
-		return e, s
-	}
-	return s, e
+	s, _ := time.Parse("2006-01-02 15:04:05", startTime)
+	return int(s.Unix())
 }
-func TimeToStamp2(startTime, endTime string) (s, e int) {
+
+func EndTimeToStamp(endTime string) int {
+	if endTime == "" {
+		return 0
+	}
+	endTime += " 23:59:59"
+	s, _ := time.Parse("2006-01-02 15:04:05", endTime)
+	return int(s.Unix())
+}
+
+func TimeRangeToStamp(startTime, endTime string) (s, e int) {
 	if startTime == "" && endTime == "" {
+		e = int(time.Now().Unix())
 		return s, e
 	}
 	startTime += " 00:00:00"
@@ -114,9 +114,10 @@ func LikeSetFromPy(slc []int) []int {
 	return result
 }
 
-// 根据名字获取ID https://testapi.robo2025.com/user/service/username/all
-func HttpGetId(name string) []map[string]string {
-	url := "https://testapi.robo2025.com/user/service/username/all?"
+// 根据名字获取ID https://testapi.robo2025.com/user/service/users/all
+func HttpGetId(name string) []int {
+	var result []int
+	url := "https://testapi.robo2025.com/user/service/users/all?"
 	url += fmt.Sprintf("username=%s&", name)
 
 	resp, err := http.Get(url)
@@ -128,6 +129,10 @@ func HttpGetId(name string) []map[string]string {
 	}
 	users := new(AllUsersInfo)
 	err = json.Unmarshal(body, users)
+	for _, v := range users.Data {
+		resultId, _ := v["main_user_id"].(float64)
+		result = append(result, int(resultId))
+	}
 
-	return users.Data
+	return result
 }

@@ -25,13 +25,12 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 	customerName := c.Query("customer_name")
 	supplierName := c.Query("supplier_name")
 	assignStatus := c.Query("assign_status") //指派状态
-	spStart := c.Query("sp_start")           //sp_date 报价开始时间
-	spEnd := c.Query("sp_end")               // sp date 报价结束时间
-	spS, spE := roboutil.TimeToStamp2(spStart, spEnd)
+	spStart := roboutil.StartTimeToStamp(c.Query("sp_start"))           //sp_date 报价开始时间
+	spEnd := roboutil.EndTimeToStamp(c.Query("sp_start"))               // sp date 报价结束时间
 
 	startTime := c.Query("start_time") //sln date
 	endTime := c.Query("end_time")     // sln date
-	s, e := roboutil.TimeToStamp(startTime, endTime)
+	s, e := roboutil.TimeRangeToStamp(startTime, endTime)
 
 	limitStr := c.DefaultQuery("limit", "15")
 	offsetStr := c.DefaultQuery("offset", "0")
@@ -49,16 +48,14 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		} else {
 			db.Order("-sln_date").Where("customer_id = ?", uid).Find(&dbData)
 		}
-
-	case 2: // supplier
-		// 只能查看已发布和已报价的
+	case 2: // supplier 只能查看已发布,已报价和已过期
 		db.Where("supplier_id = ?", uid).Find(&slnNoData)
 
 		for i := 0; i < len(slnNoData); i++ {
 			slnNOList = append(slnNOList, slnNoData[i].SlnNo)
 		}
 		var DB *gorm.DB
-		DB = db.Order("-sln_date").Where("sln_no in (?) AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNOList, []string{"P", "M"}, s, e)
+		DB = db.Order("-sln_date").Where("sln_no in (?) AND sln_status in (?) And sln_date > (?) And sln_date < (?)", slnNOList, []string{"P", "M", "E"}, s, e)
 		if slnNo != "" {
 			DB = DB.Where("sln_no = ?", slnNo)
 		}
@@ -67,12 +64,6 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		}
 		DB.Find(&dbData)
 	case 3, 4: // admin
-		//db.Order("-sln_date").Where("sln_status in (?)", []string{"P", "M", "E"}, ).Find(&dbData)
-		//if slnNo != "" {
-		//	db.Order("-sln_date").Where("sln_status in (?) And sln_no = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnNo, s, e).Find(&dbData)
-		//} else if slnName != "" {
-		//	db.Order("-sln_date").Where("sln_status in (?) And sln_name = ? And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, slnName, s, e).Find(&dbData)
-		//}else {
 		var DB *gorm.DB //customer_name 	supplier_name	 sln_status 	assign_status 	sln_date 	sp_date
 		DB = db.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
 		if slnNo != "" {
@@ -84,37 +75,23 @@ func FetchSolutionList(db *gorm.DB, c *gin.Context) ([]SlnBasicInfo, error) {
 		if isType != "" && isType != "all" {
 			DB = DB.Order("-sln_date").Where("sln_status = ? And sln_date > (?) And sln_date < (?) ", strings.ToUpper(isType), s, e)
 		}
-		//else {
-		//	DB = DB.Order("-sln_date").Where("sln_status in (?) And sln_date > (?) And sln_date < (?)", []string{"P", "M", "E"}, s, e)
-		//}
 		if customerName != "" {
-			userInfos := roboutil.HttpGetId(customerName)
-			for i:=0;i<len(userInfos);i++ {
-				if userInfos[i]["username"] == customerName{
-					customerId := userInfos[i]["id"]
-					DB = DB.Where("customer_id = ?", customerId)
-				}
-			}
+			customerId := roboutil.HttpGetId(customerName)
+			DB = DB.Where("customer_id in (?)", customerId)
 		}
 		if supplierName != "" {
-			userInfos := roboutil.HttpGetId(customerName)
-			for i:=0;i<len(userInfos);i++ {
-				if userInfos[i]["username"] == customerName{
-					supplierId := userInfos[i]["id"]
-					DB = DB.Where("supplier_id = ?", supplierId)
-				}
-			}
+			supplierId := roboutil.HttpGetId(supplierName)
+			DB = DB.Where("supplier_id in (?)", supplierId)
 		}
 		if assignStatus != "" && assignStatus != "all" {
 			DB = DB.Where("assign_status = ?", assignStatus)
 		}
-		if spS != 0 {
-			DB = DB.Where("sp_date > (?)", spS)
+		if spStart != 0 {
+			DB = DB.Where("sp_date > (?)", spStart)
 		}
-		if spE != 0 {
-			DB = DB.Where("sp_date < (?)", spE)
+		if spEnd != 0 {
+			DB = DB.Where("sp_date < (?)", spEnd)
 		}
-
 		DB.Order("-sln_date").Find(&dbData)
 	}
 
