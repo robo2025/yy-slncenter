@@ -146,8 +146,6 @@ func (e *GinEnv) viewOfferSolution(c *gin.Context) {
 	}
 }
 
-// to add sewage viewCreateSewage
-
 // post url: /sewage
 func (e *GinEnv) viewCreateSewage(c *gin.Context) {
 	verifyRole := "customer"
