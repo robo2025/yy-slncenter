@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"roboweb"
 	"encoding/json"
+	"os"
 )
 
 // SSO struct
@@ -64,9 +65,15 @@ func parseTokenInfo(auth string) (*SSOUser, error) {
 	// 获取 SSO URL
 	var ssoURL string
 	if DeployMode == "production" {
-		ssoURL = "https://login.robo2025.com/server/verify"
+		ssoURL = os.Getenv("SSO_HOST")
+		if ssoURL == "" {
+			ssoURL = "https://login.robo2025.com/server/verify"
+		}
 	} else {
-		ssoURL = "https://testlogin.robo2025.com/server/verify"
+		ssoURL = os.Getenv("SSO_HOST")
+		if ssoURL == "" {
+			ssoURL = "https://login.robo2025.com/server/verify"
+		}
 	}
 
 	// 请求 SSO URL
