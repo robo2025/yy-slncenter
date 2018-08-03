@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"os"
+	"middlewares"
 )
 
 type GinEnv struct {
@@ -24,7 +25,7 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 		gin.SetMode(gin.DebugMode)
 	}
 	router := gin.Default()
-	router.Use(cors.Default()) // cors
+	router.Use(middlewares.CorsMiddleware()) // cors
 
 	env := &GinEnv{db: db}
 
