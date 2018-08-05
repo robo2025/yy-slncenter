@@ -67,12 +67,12 @@ func parseTokenInfo(auth string) (*SSOUser, error) {
 	if DeployMode == "production" {
 		ssoURL = os.Getenv("SSO_HOST")
 		if ssoURL == "" {
-			ssoURL = "https://testapi.robo2025.com/sso"
+			ssoURL = "https://testapi.robo2025.com/sso/server/verify"
 		}
 	} else {
 		ssoURL = os.Getenv("SSO_HOST")
 		if ssoURL == "" {
-			ssoURL = "https://testapi.robo2025.com/sso"
+			ssoURL = "https://testapi.robo2025.com/sso/server/verify"
 		}
 	}
 

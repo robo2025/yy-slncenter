@@ -25,13 +25,16 @@ func StartWebService(bindAddr string, db *gorm.DB) {
 		gin.SetMode(gin.DebugMode)
 	}
 	router := gin.Default()
-	router.Use(middlewares.CorsMiddleware()) // cors
+	router.Use(middlewares.CorsMiddleware()) // cors cors.Default()
+	//router.Use(cors.Default()) // cors cors.Default()
 
 	env := &GinEnv{db: db}
 
 	// Set API
 	apiGroup := router.Group("/v1")
-	apiGroup.Use(cors.Default())
+	//apiGroup.Use(cors.Default())
+	apiGroup.Use(middlewares.CorsMiddleware()) // cors cors.Default()
+
 	apiGroup.Use(SSOAuth())
 	registerApiView(apiGroup, env)
 
